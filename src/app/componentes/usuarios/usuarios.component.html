@@ -1,0 +1,67 @@
+<div class="d-flex m-0 p-0 bg-dark bg-opacity-50 w-100" style="height: 90vh;">
+    <div class=" m-0 p-0 w-100">
+        <div class="row d-flex justify-content-center m-0 w-100 ">
+
+            <div class="bg-success bg-opacity-50 p-2 ">
+                <div class="btn-group">
+                    <button *ngFor="let option of options" type="button" class="btn btn-primary text-white fw-bold fs-5"
+                        [class.active]="option.isSelected" (click)="onValueChange(option.value)">
+                        {{ option.label }}
+                    </button>
+                </div>
+            </div>
+
+            <div class=" overflow-auto w-100" style="height: 80vh;">
+                <div *ngIf="selectedValue=='0'" class=" bg-danger bg-opacity-50 d-flex gap-2 p-5">
+                    <table class="table table-striped table-dark container">
+                        <thead class="table-dark">
+                            <tr>
+                                <ng-container>
+                                    <th scope="col">Foto</th>
+                                    <th scope="col">tipo</th>
+                                    <th scope="col">nombre</th>
+                                    <th scope="col">correo</th>
+                                    <th scope="col">Accion</th>
+                                </ng-container>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let resultado of listadoUsuarios" class="align-middle">
+                                <td><img src="{{ resultado.foto1 }}" alt="" style="height: 6rem;"></td>
+                                <td>{{ resultado.tipo }}</td>
+                                <td>{{ resultado.nombre }}</td>
+                                <td>{{ resultado.email }}</td>
+                                <td *ngIf="!habilitaciones[resultado.email] && resultado.tipo =='especialista'">
+                                    <button class="btn btn-primary" (click)="accionHabilitar(resultado.email)">
+                                        Habilitar
+                                    </button>
+                                </td>
+                                <td *ngIf="habilitaciones[resultado.email] && resultado.tipo =='especialista'">
+                                    <button (click)="accionDesabilitar(resultado.email)" class="btn btn-danger">
+                                        Desabilitar
+                                    </button>
+                                </td>
+                                <td *ngIf="resultado.tipo !='especialista'">
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="selectedValue=='1'" >
+                    <app-paciente-registro></app-paciente-registro>
+                </div>
+                <div *ngIf="selectedValue=='2'" >
+                    <app-especialista-registro></app-especialista-registro>
+                </div>
+                <div *ngIf="selectedValue=='3'" class="container bg-primary bg-opacity-50 d-flex gap-2 p-5">
+                    <app-administrador-registro></app-administrador-registro>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

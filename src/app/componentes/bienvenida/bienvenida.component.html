@@ -1,0 +1,53 @@
+
+<div class="w-100 d-flex justify-content-center"
+    style="background-image: url('../../../assets/medico/medicine_b-1-ol.svg'); background-size: cover;  height: 90vh;">
+    <div class=" d-flex flex-column align-items-center w-100  bg-opacity-25 h-75  ">
+        <div class="bg-success col-10 d-flex flex-column bg-opacity-50 rounded-3 mt-5 ">
+            <div class="">
+
+                <div class="justify-content-center align-items-center container d-flex m-2">
+                    <span class=" text-danger fw-bold" style="font-size: 4rem;"> <img class="" width="80" height="80"
+                            src="https://img.icons8.com/office/80/heart-with-pulse.png" alt="heart-with-pulse" />
+                        Hospital UTN</span>
+                </div>
+
+                <div class="container">
+
+                    <div class="card-group text-danger  h-50  justify-content-center text-center">
+                        <div class="card bg-light bg-opacity-75">
+                            <i class="bi bi-buildings p-5" style="font-size: 10rem;" alt="..."></i>
+                            <h2 class="card-title fw-bold">6 CONSULTORIOS</h2>
+                        </div>
+                        <div class="card bg-light bg-opacity-75">
+                            <i class="bi bi-hospital card-img-top p-5" style="font-size: 10rem;"></i>
+                            <h2 class="card-title fw-bold">Sala de Espera General</h2>
+                        </div>
+                        <div class="card bg-light bg-opacity-75">
+                            <i class="bi bi-calendar2-plus card-img-top p-5" style="font-size: 10rem;"></i>
+
+                            <h2 class="card-title mt-2 m-0 p-0 fw-bold">Lunes a Viernes</h2>
+                            <span>8:00 a 19:00</span>
+                            <h2 class="card-title mt-2 m-0 p-0 fw-bold">Sábados</h2>
+                            <span>8:00 a 14:00</span>
+                        </div>
+                        <div class="card bg-light bg-opacity-75">
+                            <i class="bi bi-building card-img-top p-5" style="font-size: 10rem;"></i>
+                            <h2 class="card-title m-0 p-0 fw-bold">Administracion</h2>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row justify-content-center col ">
+                    <div class="bg-warning p-2 rounded-3 col-6  bg-opacity-50 m-5 d-flex justify-content-center align-items-center ">
+                        <button *ngIf="!isUserAuthenticated" type="button" (click)="goTo('ingreso')" class="btn btn-success w-25">Ingresar</button>
+                        <button  type="button" (click)="goTo('registro')" class="btn btn-info w-25">Registrarse</button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

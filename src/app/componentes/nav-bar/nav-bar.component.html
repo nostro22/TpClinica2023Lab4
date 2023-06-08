@@ -1,0 +1,51 @@
+
+<header class="w-100 " style="height: 10vh;">
+    <div class=" py-2 text-bg-dark" style="height: 10vh;">
+      <div class="container m-0 p-0">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start mx-2 p-0">
+          <a href="/" class="btn btn-warning d-flex align-items-center d-flex   my-2 my-lg-0 me-lg-auto text-white text-decoration-none m-0 p-0">
+            <div class="d-flex text-center align-items-center gap-3  px-3" style="height: 8vh;">
+              <img src="../../../favicon.ico" class="img-fluid" alt="Image">
+              <h3>{{ nombreUsuarioSubject | async }}</h3>
+            </div>
+          </a>
+
+  
+          <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+            <li >
+              <a routerLink="quien" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Quien soy
+              </a>
+            </li>
+            <li *ngIf="!(isUserAuthenticated$ | async)">
+              <a routerLink="ingreso" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Ingreso
+              </a>
+            </li>
+            <li *ngIf="isUserAuthenticated$ | async">
+              <a (click)="logOut()" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Cerrar Sección
+              </a>
+            </li>
+            <li *ngIf="isUserAdmin$ | async">
+              <a routerLink="lazy/usuarios" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
+                Seccion Usuarios
+              </a>
+            </li>
+            <li *ngIf="!(isUserAuthenticated$ | async)">
+              <a routerLink="lazy/registro" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
+                Registrarse
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+   
+  </header>
+  

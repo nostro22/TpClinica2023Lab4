@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'ngx-toastr/toastr';
+@import url('https://fonts.googleapis.com/css2?family=Belleza&family=Caudex:wght@700&family=Cinzel+Decorative:wght@700&family=DM+Sans:ital@1&family=Federo&family=Italiana&family=Krona+One&family=Space+Grotesk:wght@500&family=Syne:wght@600&family=Viaoda+Libre&display=swap');
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+* {
+  font-family: 'Caudex', serif;
+
+  color: aliceblue;
+  font-weight: bold;
+
+  .invalid {
+    color: rgb(255, 47, 99);
+  }
+
+}

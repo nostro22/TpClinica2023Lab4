@@ -1,0 +1,48 @@
+<div *ngIf="registroPaciente=='eleccion'" class="w-100 d-flex justify-content-center"
+    style="background-image: url('https://media.giphy.com/media/ij1WvlilscRFoIRn7u/giphy.gif'); background-size: cover; background-position: center; height: 90vh;">
+
+    <div class=" ">
+
+        <div class="container mt-5  p-5 bg-warning rounded-3 bg-opacity-50">
+
+            <div class="button-container">
+                <div class="text-center">
+                    <h2>REGISTRO</h2>
+                    <h4 class="text-success">Seleccione que desea registrar</h4>
+                </div>
+                <div>
+                    <button class="btn btn-primary" (click)="cambiarRegistro('paciente')"> 
+                         <img src="../../../assets/pacienTeam.jpg" alt="Pacientes" style="height: 20rem;">
+                         Paciente
+                        </button>
+                  
+              
+                    <button class="btn btn-success" (click)="cambiarRegistro('especialista')">
+                        <img src="../../../assets/espTeam.jpg" alt="Especialistas" srcset="" style="height: 20rem;">
+                        Especialista
+                    </button>
+                   
+                </div>
+            </div>
+
+
+            <div *ngIf="loading" class="d-flex justify-content-center mt-2">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div *ngIf="registroPaciente!='eleccion'"
+    class="position-fixed top-2 start-50 bg-dark bg-opacity-50  translate-middle-x p-2">
+    <button class="btn btn-primary" (click)="cambiarRegistro('paciente')">Paciente</button>
+    <button class="btn btn-success" (click)="cambiarRegistro('especialista')">Especialista</button>
+</div>
+
+
+
+
+<app-especialista-registro *ngIf="registroPaciente=='especialista'"></app-especialista-registro>
+<app-paciente-registro *ngIf="registroPaciente=='paciente'"></app-paciente-registro>

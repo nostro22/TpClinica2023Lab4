@@ -1,0 +1,81 @@
+<div class="w-100 d-flex justify-content-center loginbg">
+  <div class=" bg-success bg-opacity-50 d-flex w-100">
+
+    <div class="container mt-5  p-5 bg-warning rounded-3 bg-opacity-50">
+      <form [formGroup]="formularioRegistroUsuario" (ngSubmit)="logUsuario()">
+        <div class="row">
+          <div class="col-md-12 mb-5 text-center">
+            <div class="d-flex gap-5 justify-content-start mb-5">
+              <div class="bg-info d-flex rounded-3 p-2">
+                <div class="d-flex gap-2">
+                  <div (click)="accesoRapido('paciente1')" class="card circle-card" style="width: 8rem;">
+                    <img [src]="pacientesImagenes[0]" class="card-img-top" alt="...">
+                  </div>
+                  <div (click)="accesoRapido('paciente2')" class="card circle-card" style="width: 8rem;">
+                    <img [src]="pacientesImagenes[1]" class="card-img-top" alt="...">
+                  </div>
+                  <div (click)="accesoRapido('paciente3')" class="card circle-card" style="width: 8rem;">
+                    <img [src]="pacientesImagenes[2]" class="card-img-top" alt="...">
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex rounded-3 p-2 bg-primary gap-2 ">
+
+                <div (click)="accesoRapido('especialista1')" class="card circle-card" style="width: 8rem;">
+                  <img [src]="pacientesImagenes[3]" class="card-img-top" alt="...">
+                </div>
+                <div (click)="accesoRapido('especialista2')" class="card circle-card" style="width: 8rem;">
+                  <img [src]="pacientesImagenes[4]" class="card-img-top" alt="...">
+                </div>
+              </div>
+              <div class="d-flex rounded-3 p-2 bg-success">
+                <div (click)="accesoRapido('administrador')" class="card circle-card" style="width: 8rem;">
+                  <img [src]="pacientesImagenes[5]" class="card-img-top" alt="...">
+                </div>
+
+              </div>
+
+            </div>
+            <h2>Formulario Ingreso</h2>
+          </div>
+
+        </div>
+        <div class="row formulario">
+
+          <div class="col-md-12 mb-5">
+            <label for="email" class="form-label">Email</label>
+            <input formControlName="email" type="email" class="form-control" id="email" placeholder="Ingrese email">
+            <small *ngIf="formularioRegistroUsuario.controls.email.errors?.['required'] &&
+          formularioRegistroUsuario.controls.email.touched" class="invalid">El email es requerido</small>
+            <small *ngIf="formularioRegistroUsuario.controls.email.errors?.['email'] &&
+          formularioRegistroUsuario.controls.email.touched" class="invalid">
+              Formato de mail incorrecto
+            </small>
+          </div>
+          <div class="col-md-12 mb-5">
+            <label for="clave" class="form-label">Clave</label>
+            <input formControlName="clave" type="password" class="form-control" id="clave" placeholder="Ingrese clave">
+            <small *ngIf="formularioRegistroUsuario.controls.clave.errors?.['minlength'] &&
+          formularioRegistroUsuario.controls.clave.touched" class="invalid">
+              Minimo 6 letras
+            </small>
+            <small *ngIf="formularioRegistroUsuario.controls.clave.errors?.['required'] &&
+        formularioRegistroUsuario.controls.clave.touched" class="invalid">Contraseña es requerido</small>
+          </div>
+        </div>
+        <div class="row">
+
+          <div class="col-md-12 d-grid gap-2">
+            <button [disabled]="formularioRegistroUsuario.invalid || loading" type="submit"
+              class="btn btn-primary btn-block">
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </form>
+
+      
+    </div>
+
+  </div>
+</div>
