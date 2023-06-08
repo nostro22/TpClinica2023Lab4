@@ -5,24 +5,34 @@
 
         <div class="container mt-5  p-5 bg-warning rounded-3 bg-opacity-50">
 
-            <div class="button-container">
+            <div class="button-container ">
                 <div class="text-center">
                     <h2>REGISTRO</h2>
                     <h4 class="text-success">Seleccione que desea registrar</h4>
                 </div>
-                <div>
-                    <button class="btn btn-primary" (click)="cambiarRegistro('paciente')"> 
-                         <img src="../../../assets/pacienTeam.jpg" alt="Pacientes" style="height: 20rem;">
-                         Paciente
-                        </button>
-                  
-              
-                    <button class="btn btn-success" (click)="cambiarRegistro('especialista')">
-                        <img src="../../../assets/espTeam.jpg" alt="Especialistas" srcset="" style="height: 20rem;">
-                        Especialista
-                    </button>
-                   
+                <div class="d-flex flex-column justify-content-center aling-content-center align-items-center gap-3">
+                    <div (click)="cambiarRegistro('paciente')" class="circle-card bg-info bg-opacity-50">
+                      <div class="circle-image-container">
+                        <img src="../../../assets/pacienTeam.jpg" class="circle-image" alt="Foto paciente">
+                        <div class="hover-text bg-info w-100 text-center"> 
+                            <h1>
+                                Paciente
+                            </h1>
+                        </div>
+                      </div>
+                    </div>
+                    <div (click)="cambiarRegistro('especialista')" class="circle-card bg-info bg-opacity-50">
+                      <div class="circle-image-container">
+                        <img src="../../../assets/espTeam.jpg" class="circle-image" alt="Foto especialista">
+                        <div class="hover-text bg-success w-100 text-center"> 
+                            <h1>
+                                Especialista
+                            </h1>
+                        </div>
+                      </div>
+                    </div>
                 </div>
+                  
             </div>
 
 

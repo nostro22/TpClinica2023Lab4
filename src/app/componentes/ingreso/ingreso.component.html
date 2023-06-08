@@ -5,37 +5,7 @@
       <form [formGroup]="formularioRegistroUsuario" (ngSubmit)="logUsuario()">
         <div class="row">
           <div class="col-md-12 mb-5 text-center">
-            <div class="d-flex gap-5 justify-content-start mb-5">
-              <div class="bg-info d-flex rounded-3 p-2">
-                <div class="d-flex gap-2">
-                  <div (click)="accesoRapido('paciente1')" class="card circle-card" style="width: 8rem;">
-                    <img [src]="pacientesImagenes[0]" class="card-img-top" alt="...">
-                  </div>
-                  <div (click)="accesoRapido('paciente2')" class="card circle-card" style="width: 8rem;">
-                    <img [src]="pacientesImagenes[1]" class="card-img-top" alt="...">
-                  </div>
-                  <div (click)="accesoRapido('paciente3')" class="card circle-card" style="width: 8rem;">
-                    <img [src]="pacientesImagenes[2]" class="card-img-top" alt="...">
-                  </div>
-                </div>
-              </div>
-              <div class="d-flex rounded-3 p-2 bg-primary gap-2 ">
 
-                <div (click)="accesoRapido('especialista1')" class="card circle-card" style="width: 8rem;">
-                  <img [src]="pacientesImagenes[3]" class="card-img-top" alt="...">
-                </div>
-                <div (click)="accesoRapido('especialista2')" class="card circle-card" style="width: 8rem;">
-                  <img [src]="pacientesImagenes[4]" class="card-img-top" alt="...">
-                </div>
-              </div>
-              <div class="d-flex rounded-3 p-2 bg-success">
-                <div (click)="accesoRapido('administrador')" class="card circle-card" style="width: 8rem;">
-                  <img [src]="pacientesImagenes[5]" class="card-img-top" alt="...">
-                </div>
-
-              </div>
-
-            </div>
             <h2>Formulario Ingreso</h2>
           </div>
 
@@ -63,8 +33,8 @@
         formularioRegistroUsuario.controls.clave.touched" class="invalid">Contraseña es requerido</small>
           </div>
         </div>
+        
         <div class="row">
-
           <div class="col-md-12 d-grid gap-2">
             <button [disabled]="formularioRegistroUsuario.invalid || loading" type="submit"
               class="btn btn-primary btn-block">
@@ -72,10 +42,42 @@
             </button>
           </div>
         </div>
+        <div class="row col-6 mt-3 bg-success bg-opacity-50 p-2 text-end float-end">
+          <h3>Acceso Rapido</h3>
+          <div class="d-flex gap-5 justify-content-end mb-5 float-start">
+            <div class="bg-info d-flex  p-2 gap-2">
+              <button (click)="accesoRapido('paciente1')" class="btn btn-primary fab-btn btn-sm" type="button">
+                <img [src]="pacientesImagenes[0]" alt="Foto paciente" class="img-fluid smaller-image">
+              </button>
+              <button (click)="accesoRapido('paciente2')" class="btn btn-primary fab-btn btn-sm" type="button">
+                <img [src]="pacientesImagenes[1]" alt="Foto paciente" class="img-fluid smaller-image">
+              </button>
+              <button (click)="accesoRapido('paciente3')" class="btn btn-primary fab-btn btn-sm" type="button">
+                <img [src]="pacientesImagenes[2]" alt="Foto paciente" class="img-fluid smaller-image">
+              </button>
+            </div>
+            <div class="d-flex  p-2 bg-success gap-2">
+              <button (click)="accesoRapido('especialista1')" class="btn btn-primary fab-btn btn-sm" type="button">
+                <img [src]="pacientesImagenes[3]" alt="Foto especialista" class="img-fluid smaller-image">
+              </button>
+              <button (click)="accesoRapido('especialista2')" class="btn btn-primary fab-btn btn-sm" type="button">
+                <img [src]="pacientesImagenes[4]" alt="Foto especialista" class="img-fluid smaller-image">
+              </button>
+            </div>
+            <div class="d-flex  p-2 bg-warning">
+              <button (click)="accesoRapido('administrador')" class="btn btn-primary fab-btn btn-sm" type="button">
+                <img [src]="pacientesImagenes[5]" alt="Foto administrador" class="img-fluid smaller-image">
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        
       </form>
 
-      
+
     </div>
 
   </div>
 </div>
+
