@@ -3,6 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Injectable } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, addDoc, collection, deleteDoc, getDocs, orderBy, query, where } from '@angular/fire/firestore';
 import { getDownloadURL, ref, uploadBytesResumable, Storage } from '@angular/fire/storage';
+import { limit } from 'firebase/firestore';
 @Injectable({
   providedIn: 'root'
 })
@@ -208,6 +209,53 @@ export class FileUploadService {
     }
     // If no records are found, you can return a default value or throw an exception, depending on your needs.
     return [];
+  }
+  async getEspecialidadesPorEmail(email: string): Promise<any> {
+    const usuariosRefCollection = collection(this.firestore, 'especialidades');
+    const q = query(
+      usuariosRefCollection,
+      where('especialista', '==', email)
+    );
+  
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const usuarios = querySnapshot.docs.map(docSnapshot => docSnapshot.data());
+      let listaEspecialidades:any=[];
+      const mapeoActualizado = usuarios.reduce((mapeo, elemento) => {
+        const { especialista, especialidad } = elemento;
+        
+        if (especialista && especialidad) {
+          if (!mapeo[especialista]) {
+            mapeo[especialista] = [];
+          }
+          
+         listaEspecialidades.push(especialidad);
+        }
+        
+        return listaEspecialidades;
+      }, {});
+      
+      return  mapeoActualizado ;
+    }
+    
+    return { especialidades: {} };
+  }
+
+  async getUsuario(email:string): Promise<any> {
+    const usuariosRefCollection = collection(this.firestore, 'usuarios');
+    const q = query(
+      usuariosRefCollection,
+      where('email','==',email),
+      limit(1)
+    );
+  
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const usuario = querySnapshot.docs.map(docSnapshot => docSnapshot.data());
+      return usuario;
+    }
+    // If no records are found, you can return a default value or throw an exception, depending on your needs.
+    return null;
   }
   
 }

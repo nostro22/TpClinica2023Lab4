@@ -10,8 +10,25 @@
             </div>
           </a>
 
-  
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+            <li >
+              <a routerLink="turno/paciente" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Turno paciente
+              </a>
+            </li>
+            <li >
+              <a routerLink="turno/especialista" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Turno especialista
+              </a>
+            </li>
+            <li >
+              <a routerLink="turno/administrador" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Turno administrador
+              </a>
+            </li>
             <li >
               <a routerLink="quien" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
@@ -22,6 +39,12 @@
               <a routerLink="ingreso" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
                 Ingreso
+              </a>
+            </li>
+            <li *ngIf="(isUserAuthenticated$ | async)">
+              <a routerLink="perfil" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
+                Mi Perfil
               </a>
             </li>
             <li *ngIf="isUserAuthenticated$ | async">

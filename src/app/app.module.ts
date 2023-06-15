@@ -19,6 +19,11 @@ import { NavBarComponent } from './componentes/nav-bar/nav-bar.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { QuienComponent } from './componentes/quien/quien.component';
 import { ErrorComponent } from './componentes/error/error.component';
+import { TurnoPacienteComponent } from './componentes/turno-paciente/turno-paciente.component';
+import { TurnoEspecialistaComponent } from './componentes/turno-especialista/turno-especialista.component';
+import { TurnoAdministradorComponent } from './componentes/turno-administrador/turno-administrador.component';
+import { TurnoSolicitarComponent } from './componentes/turno-solicitar/turno-solicitar.component';
+import { MiPerfilComponent } from './componentes/mi-perfil/mi-perfil.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +33,11 @@ import { ErrorComponent } from './componentes/error/error.component';
     NavBarComponent,
     QuienComponent,
     ErrorComponent,
+    TurnoPacienteComponent,
+    TurnoEspecialistaComponent,
+    TurnoAdministradorComponent,
+    TurnoSolicitarComponent,
+    MiPerfilComponent,
     
   ],
   imports: [

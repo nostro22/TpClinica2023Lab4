@@ -58,7 +58,20 @@ export class AutenticadorService {
     }
     return null;
   }
-  public getToken(): string {
+  async getUserCurrentUser(): Promise<any> {
+    const uid = this.getToken();
+    if(uid)
+    {
+      const usuario = await this.getUserByUID(uid);
+      return usuario;
+    }
+    return null;
+  }
+  public getToken(): string|null {
+    if(localStorage.getItem('token')!="")
+    {
+      return localStorage.getItem('token');
+    }
     return this.tokenSubject.value;
   }
   async subirHistorialLogin(usuarioMail: string) {

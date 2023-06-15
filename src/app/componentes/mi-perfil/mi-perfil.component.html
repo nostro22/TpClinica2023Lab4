@@ -1,0 +1,81 @@
+<div class="d-flex m-0 p-0 bg-dark bg-opacity-50 w-100" style="height: 90vh;">
+    <div class=" m-0 p-0 w-100">
+        <div class="row d-flex justify-content-center m-0 w-100 ">
+
+            <div class="bg-success bg-opacity-50 p-2 ">
+
+            </div>
+
+            <div class=" overflow-auto w-100" style="height: 80vh;">
+                <div class=" bg-danger bg-opacity-50 d-flex gap-2 p-5">
+                    <table class="table table-striped table-dark container">
+                        <thead class="table-dark">
+                            <tr>
+                                <ng-container>
+                                    <th scope="col">Foto</th>
+                                    <th scope="col">tipo</th>
+                                    <th scope="col">nombre</th>
+                                    <th scope="col">apellido</th>
+                                    <th scope="col">correo</th>
+                                    <th scope="col">edad</th>
+                                    <th scope="col">DNI</th>
+                                    <th *ngIf="listadoUsuarios.tipo =='especialista'">
+                                        Habilitado
+                                    </th>
+                                    <th *ngIf="listadoUsuarios.tipo =='especialista'">
+                                        Especialidades
+                                    </th>
+
+                                </ng-container>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="align-middle">
+                                <td><img src="{{ listadoUsuarios.foto1 }}" alt="" style="height: 6rem;"></td>
+                                <td>{{ listadoUsuarios.tipo }}</td>
+                                <td>{{ listadoUsuarios.nombre }}</td>
+                                <td>{{ listadoUsuarios.apellido }}</td>
+                                <td>{{ listadoUsuarios.email }}</td>
+                                <td>{{ listadoUsuarios.edad }}</td>
+                                <td>{{ listadoUsuarios.dni }}</td>
+
+                                <td *ngIf="listadoUsuarios.tipo =='especialista'">
+                                    {{habilitado}}
+                                </td>
+                                <td *ngIf="listadoUsuarios.tipo =='especialista'">
+
+                                    <button *ngFor="let option of especialidades" type="button"
+                                        class="btn btn-primary text-white fw-bold fs-5"
+                                        (click)="onValueChange(option.value)">
+                                        {{ option }}
+                                    </button>
+                                </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class=" bg-info bg-opacity-50 d-flex flex-column gap-2 p-5" *ngIf="listadoUsuarios.tipo =='especialista'">
+                    <div>
+                        <button *ngFor="let option of dias" type="button" class="btn btn-primary text-white fw-bold fs-5">
+                            {{option}}
+                        </button>
+
+                    </div>
+
+                    <div class="d-flex container mt-2">
+                        <label for="horario">Horario</label>
+                        <input type="text" id="horario">
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
