@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Injectable } from '@angular/core';
-import { DocumentData, Firestore, QuerySnapshot, addDoc, collection, deleteDoc, getDocs, orderBy, query, where } from '@angular/fire/firestore';
+import { DocumentData, Firestore, QuerySnapshot, addDoc, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
 import { getDownloadURL, ref, uploadBytesResumable, Storage } from '@angular/fire/storage';
 import { limit } from 'firebase/firestore';
+import { Observable, from } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -90,12 +91,13 @@ export class FileUploadService {
       return [];
     }
   }
-  async getTurnosDeEspecialista(especialista: string): Promise<any[]> {
+  getTurnosDeEspecialista(especialista: string): Observable<any[]> {
     const turnosCollectionRef = collection(this.firestore, 'citas');
   
-    try {
-      const q = query(turnosCollectionRef, where('especialista', '==', especialista));
-      const querySnapshot: QuerySnapshot<any> = await getDocs(q);
+    const q = query(turnosCollectionRef, where('especialista.email', '==', especialista));
+    const queryPromise = getDocs(q);
+  
+    return from(queryPromise.then((querySnapshot: QuerySnapshot<any>) => {
       const turnosList: any[] = [];
   
       querySnapshot.forEach((doc) => {
@@ -105,10 +107,51 @@ export class FileUploadService {
       });
   
       return turnosList;
-    } catch (error) {
+    }).catch((error) => {
       console.error('Error fetching documents:', error);
       return [];
-    }
+    }));
+  }
+  getTurnosDePaciente(paciente: string): Observable<any[]> {
+    const turnosCollectionRef = collection(this.firestore, 'citas');
+  
+    const q = query(turnosCollectionRef, where('paciente.email', '==', paciente));
+    const queryPromise = getDocs(q);
+  
+    return from(queryPromise.then((querySnapshot: QuerySnapshot<any>) => {
+      const turnosList: any[] = [];
+  
+      querySnapshot.forEach((doc) => {
+        const turnos = doc.data();
+        const fecha = new Date(turnos.dia.seconds * 1000 + turnos.dia.nanoseconds / 1000000);
+        turnosList.push({ ...turnos, dia: fecha });
+      });
+  
+      return turnosList;
+    }).catch((error) => {
+      console.error('Error fetching documents:', error);
+      return [];
+    }));
+  }
+  getTurnos(): Observable<any[]> {
+    const turnosCollectionRef = collection(this.firestore, 'citas');
+  
+    const queryPromise = getDocs(turnosCollectionRef);
+  
+    return from(queryPromise.then((querySnapshot: QuerySnapshot<any>) => {
+      const turnosList: any[] = [];
+  
+      querySnapshot.forEach((doc) => {
+        const turnos = doc.data();
+        const fecha = new Date(turnos.dia.seconds * 1000 + turnos.dia.nanoseconds / 1000000);
+        turnosList.push({ ...turnos, dia: fecha });
+      });
+  
+      return turnosList;
+    }).catch((error) => {
+      console.error('Error fetching documents:', error);
+      return [];
+    }));
   }
   
   async getImagenEspecialidad(especialidad: string): Promise<any> {
@@ -221,16 +264,27 @@ export class FileUploadService {
       return false;
     }
   }
-  async subirCita(cita:any): Promise<boolean> {
+  async subirCita(cita: any): Promise<boolean> {
     const especialistasCollectionRef = collection(this.firestore, 'citas');
     try {
-      await addDoc(especialistasCollectionRef,  cita );
+      if(!cita.uid)
+      {
+        const docRef = await addDoc(especialistasCollectionRef, cita);
+        const uid = docRef.id; 
+        cita.uid = uid; 
+        await updateDoc(docRef, cita); 
+        return true;
+      }else{
+        const docRef = doc(this.firestore, 'citas', cita.uid);
+        await updateDoc(docRef, cita); 
+      }
       return true;
     } catch (error) {
       console.error('Error adding document:', error);
       return false;
     }
   }
+  
 
   async esPaciente(email: string): Promise<boolean> {
     const especialistasCollectionRef = collection(this.firestore, 'usuarios');

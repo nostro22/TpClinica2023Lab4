@@ -108,6 +108,27 @@ export class NotificacionesService {
     return false;
     }
   }
+  async showAlertComentario(titulo: string, mensaje: string): Promise<string | false> {
+    const result = await Swal.fire({
+      title: titulo,
+      html: `<input type="text" id="comentario" class="swal2-input" placeholder="Ingrese su comentario">`,
+      background: 'rgba(6, 214, 160, 0.8)',
+      color: 'white',
+      showCancelButton: true,
+      confirmButtonText: "Enviar",
+      cancelButtonText: 'No',
+      preConfirm: () => {
+        const comentarioInput = document.getElementById('comentario') as HTMLInputElement;
+        return comentarioInput.value;
+      },
+    });
+  
+    if (result.isConfirmed) {
+      return result.value as string;
+    } else {
+      return false;
+    }
+  }
   async showAlertDanger(titulo:string,mensaje:string): Promise<void> {
     // You can customize the title, text, and other options here
     const result = await Swal.fire({

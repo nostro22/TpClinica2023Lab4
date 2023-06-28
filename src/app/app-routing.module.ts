@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: "ingreso", title: "Ingreso", component: IngresoComponent },
   { path: "turno/paciente", title: "Turno Paciente", component: TurnoPacienteComponent },
   { path: "turno/especialista", title: "Turno especialista", component: TurnoEspecialistaComponent },
-  { path: "turno/administrador", title: "Turno administrador", component: TurnoAdministradorComponent },
+  { path: "turnos", title: "Turno administrador", component: TurnoAdministradorComponent },
   { path: "misTurnos", title: "Mis Turnos", component: MisTurnosComponent },
   { path: "perfil", title: "perfil", component: MiPerfilComponent },
   { path: "404", title: "Error", component: ErrorComponent },

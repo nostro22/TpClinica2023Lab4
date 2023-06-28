@@ -28,7 +28,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { MisTurnosComponent } from './componentes/mis-turnos/mis-turnos.component';
 import { TimeFormatPipe } from './pipes/time-format.pipe';
-
+import { DatePipe } from '@angular/common';
 // Register the 'es' locale
 registerLocaleData(localeEs);
 @NgModule({
@@ -63,7 +63,7 @@ registerLocaleData(localeEs);
     NgxSpinnerModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -26,11 +26,13 @@ export class TurnoPacienteComponent implements OnInit {
   }
 
   async pedirCitaA(horario: any) {
+    let pacienteAux =(await this.auth.getUserCurrentUser()).email;
+    pacienteAux = (await this.firebase.getUsuario(pacienteAux))[0];
     const cita = {
-      especialista: this.especialistaSeleccionado.email,
+      especialista: this.especialistaSeleccionado,
       especialidad: this.especialidadSeleccionado,
       dia: this.diaSeleccionado,
-      paciente: (await this.auth.getUserCurrentUser()).email,
+      paciente: pacienteAux,
       horario: horario,
       estado: "sinAprobar"
     }
@@ -112,22 +114,21 @@ export class TurnoPacienteComponent implements OnInit {
       const duracion = (await this.firebase.getEspecialistaHorarios(this.especialistaSeleccionado.email, this.especialidadSeleccionado))[0].duracion;
       let horarioDelDia = await this.divideDayIntoSegments(duracion);
       console.log(this.especialistaSeleccionado.email);
-      let citas = await this.firebase.getTurnosDeEspecialista(this.especialistaSeleccionado.email);
+      let citas = await this.firebase.getTurnosDeEspecialista(this.especialistaSeleccionado.email).toPromise();
       console.log(citas);
-      citas = citas.filter(cita => cita.dia.getDate() === this.diaSeleccionado.getDate());
+      citas = citas!.filter(cita => cita.dia.getDate() === this.diaSeleccionado.getDate());
       console.log(citas);
       const horariosOcupados = citas.map(turno => turno.horario);
       const horariosDisponiblesFiltrados = horarioDelDia.filter(horario => !horariosOcupados.includes(horario));
       this.diaHorarios = horariosDisponiblesFiltrados;
     }
     catch {
-
     }
     finally {
       this.notificationS.hideSpinner();
     }
   }
-
+  
 
   obtenerNombreDia(diaSemana: number): string {
     const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
