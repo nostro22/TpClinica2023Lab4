@@ -1,1 +1,92 @@
-<p>turno-paciente works!</p>
+<div class="row col-12 bg-success  bg-opacity-50 m-0 text-center float-end">
+    <div class="bg-success bg-opacity-50  text-center float-end">
+        <h3>Nuestros Especialistas</h3>
+        <div class="row">
+            <div *ngFor="let especialista of especialistas" class="col-2">
+                <div (click)="selecionadoEspecialista(especialista)" class="bg-info p-2 gap-2">
+                    <button class="btn btn-primary fab-btn btn-sm especialista-button" type="button"
+                        style="height: 200px;">
+                        <div class="d-flex flex-column align-items-center">
+                            <img [src]="especialista.foto1" alt="Foto especialista"
+                                class="img-fluid smaller-image especialista-image">
+                            <div class="overflow-hidden">
+                                <h4>{{ especialista.nombre }}</h4>
+                                <h4>{{ especialista.apellido }}</h4>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-warning row p-2">
+            <div class="col-12 d-flex" *ngIf="especialistaSeleccionado">
+                <div class="col-12 d-flex flex-column">
+                    <h3>Especialidades de {{especialistaSeleccionado.nombre}}</h3>
+                    <div class="container">
+                        <div class="bg-info p-2 gap-2 row">
+                          <ng-container *ngFor="let espe of especialidadesSeleccionado">
+                            <div  class="col-2 ">
+                              <button class="btn btn-primary fab-btn btn-sm especialista-button p-2" type="button"
+                                       (click)="selecionadoEspecialidad(espe.especialidad)">
+                                <img [src]="espe.imagen" alt="Foto especialista" class="img-fluid smaller-image especialista-image">
+                                <div class="overflow-hidden">
+                                  <p>{{espe.especialidad}}</p>
+                                </div>
+                              </button>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="col-12 d-flex" *ngIf="especialidadSeleccionado">
+                    <div class="col-12 d-flex flex-column">
+                        <h3>Dias Disponibles</h3>
+                        <div class="container">
+                            <div class="bg-info p-2 gap-2 row">
+                              <ng-container *ngFor="let dias of diasTurnos">
+                                <div  class="col-2 ">
+                                  <button class="btn btn-primary fab-btn btn-sm rounded-0 p-2 square-btn" type="button"
+                                      (click)="selecionadoDia(dias)"    >
+                                    <div class="overflow-hidden">
+                                      <p>{{ dias | date: 'dd-MM-yyyy' }}</p>
+
+                                    </div>
+                                  </button>
+                                </div>
+                              </ng-container>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="col-12 d-flex" *ngIf="diaSeleccionado">
+                    <div class="col-12 d-flex flex-column">
+                        <h3>Horarios Disponibles</h3>
+                        <div class="container">
+                            <div class="bg-info p-2 gap-2 row">
+                              <ng-container *ngFor="let horario of diaHorarios">
+                                <div  class="col-2 ">
+                                  <button class="btn btn-primary fab-btn btn-sm especialista-button p-2" type="button"
+                                      (click)="pedirCitaA(horario)"    >
+                                    <div class="overflow-hidden">
+                                      <p>{{horario | timeFormat }}</p>
+                                    </div>
+                                  </button>
+                                </div>
+                              </ng-container>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>

@@ -14,7 +14,7 @@
                                 <ng-container>
                                     <th scope="col">Foto</th>
                                     <th scope="col">tipo</th>
-                                    <th scope="col">nombre</th>
+                                    <th scope="col">duracion</th>
                                     <th scope="col">apellido</th>
                                     <th scope="col">correo</th>
                                     <th scope="col">edad</th>
@@ -33,7 +33,7 @@
                             <tr class="align-middle">
                                 <td><img src="{{ listadoUsuarios.foto1 }}" alt="" style="height: 6rem;"></td>
                                 <td>{{ listadoUsuarios.tipo }}</td>
-                                <td>{{ listadoUsuarios.nombre }}</td>
+                                <td>{{ listadoUsuarios.duracion }}</td>
                                 <td>{{ listadoUsuarios.apellido }}</td>
                                 <td>{{ listadoUsuarios.email }}</td>
                                 <td>{{ listadoUsuarios.edad }}</td>
@@ -45,37 +45,59 @@
                                 <td *ngIf="listadoUsuarios.tipo =='especialista'">
 
                                     <button *ngFor="let option of especialidades" type="button"
-                                        class="btn btn-primary text-white fw-bold fs-5"
-                                        (click)="onValueChange(option.value)">
+                                        class="btn btn-primary text-white fw-bold fs-5" (click)="onValueChange(option)">
                                         {{ option }}
                                     </button>
                                 </td>
-
-
                             </tr>
 
                         </tbody>
                     </table>
                 </div>
 
-                <div class=" bg-info bg-opacity-50 d-flex flex-column gap-2 p-5" *ngIf="listadoUsuarios.tipo =='especialista'">
-                    <div>
-                        <button *ngFor="let option of dias" type="button" class="btn btn-primary text-white fw-bold fs-5">
-                            {{option}}
+                <div class=" bg-info bg-opacity-50 d-flex flex-column gap-2 p-5"
+                    *ngIf="listadoUsuarios.tipo =='especialista'">
+                    <div class="bg-info bg-opacity-50 d-flex flex-wrap flex-column gap-2 p-2">
+                        <h3 class="d-block text-warning">Especialidad {{especialidadActiva}}</h3>
+                        <h4 class="d-flex">Dias Activos</h4>
+                        <div class="d-flex">
+                            <div  *ngFor="let option of dias">
+                                <button *ngIf="option.activo" (click)="cambiarDia(false,option.dia)" type="button"
+                                    class="btn btn-primary text-white fw-bold fs-5">
+                                    {{option.dia}}
+                                </button>
+                                <button *ngIf="!option.activo" (click)="cambiarDia(true,option.dia)" type="button"
+                                    class="btn btn-danger text-white fw-bold fs-5">
+                                    {{option.dia}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <form [formGroup]="formularioHorario" (ngSubmit)="actualizarHorario()">
+                        <div class="d-flex col-6 mt-2">
+                            <label class="form-label" for="duracion">Duración del Turno en minutos</label>
+                            <input formControlName="duracion" type="number" class="form-control" id="duracion"
+                                placeholder="Ingrese aqui la duración" min="30">
+                            <small
+                                *ngIf="formularioHorario.controls.duracion.errors?.['required'] && formularioHorario.controls.duracion.touched"
+                                class="invalid">
+                                El horario de atencion es requerido
+                            </small>
+                            <small *ngIf="formularioHorario.controls.duracion.touched &&
+                            formularioHorario.controls.duracion.errors?.['min']" class="invalid">
+                                El horario no puese ser menor a 30 minutos
+                            </small>
+
+                        </div>
+                        <button [disabled]="formularioHorario.invalid" type="submit"
+                            class="mt-3 btn btn-success text-white fw-bold fs-5">
+                            Actualizar Horario de atención
                         </button>
-
-                    </div>
-
-                    <div class="d-flex container mt-2">
-                        <label for="horario">Horario</label>
-                        <input type="text" id="horario">
-                    </div>
+                    </form>
                 </div>
-
             </div>
-
-
-
         </div>
     </div>
 </div>

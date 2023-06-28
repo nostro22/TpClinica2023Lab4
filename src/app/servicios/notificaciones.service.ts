@@ -83,16 +83,40 @@ export class NotificacionesService {
       // Perform the action when the user clicks "No, keep it!"
     }
   }
+  async showAlertSuccesConfirmacion(titulo:string,mensaje:string,btnTextConfirmacion:string): Promise<boolean> {
+    // You can customize the title, text, and other options here
+    const result = await Swal.fire({
+      title: titulo,
+      text: mensaje,
+      background: 'rgba(6, 214, 160, 0.8)',
+      color:'white',
+      // backdrop: `
+      //   rgba(0,0,123,0.4)
+      //   url("https://media.giphy.com/media/2A760H1p8R9UNpYCba/giphy.gif")
+      //   top center
+      //   no-repeat
+      // `,
+      //icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: btnTextConfirmacion,
+      cancelButtonText: 'No',
+    });
+  
+    if (result.isConfirmed) {
+     return true;
+    } else {
+    return false;
+    }
+  }
   async showAlertDanger(titulo:string,mensaje:string): Promise<void> {
     // You can customize the title, text, and other options here
     const result = await Swal.fire({
       title: titulo,
       text: mensaje,
       color:'white',
-      background: 'rgba(247, 37, 133, 0.4)',
+      background: 'rgba(247, 37, 133, 0.9)',
       backdrop: `
         rgba(0,0,123,0.4)
-        url("https://media.giphy.com/media/QQ1K0jv4JyUR750vrr/giphy.gif")
         top center
         no-repeat
       `,

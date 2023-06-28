@@ -24,7 +24,13 @@ import { TurnoEspecialistaComponent } from './componentes/turno-especialista/tur
 import { TurnoAdministradorComponent } from './componentes/turno-administrador/turno-administrador.component';
 import { TurnoSolicitarComponent } from './componentes/turno-solicitar/turno-solicitar.component';
 import { MiPerfilComponent } from './componentes/mi-perfil/mi-perfil.component';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { MisTurnosComponent } from './componentes/mis-turnos/mis-turnos.component';
+import { TimeFormatPipe } from './pipes/time-format.pipe';
 
+// Register the 'es' locale
+registerLocaleData(localeEs);
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,6 +44,8 @@ import { MiPerfilComponent } from './componentes/mi-perfil/mi-perfil.component';
     TurnoAdministradorComponent,
     TurnoSolicitarComponent,
     MiPerfilComponent,
+    MisTurnosComponent,
+    TimeFormatPipe,
     
   ],
   imports: [

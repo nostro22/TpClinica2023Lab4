@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, updateDoc, addDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, updateDoc, addDoc, collection, query, where, getDocs, QuerySnapshot, DocumentReference } from '@angular/fire/firestore';
 import { Especialista } from '../clases/especialista';
 import { Paciente } from '../clases/paciente';
 import { User, UserCredential, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, getAuth, sendEmailVerification, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
@@ -30,6 +30,45 @@ export class AutenticadorService {
     this.colUsuarios = collection(this.firebase, 'usuarios');
     await this.createUser(especialista, email, password);
   }
+  async altaHorario(especialista: string, especialidad: string, horarioNuevo: any, duracion:string) {
+    try {
+      const colHorarios = collection(this.firebase, 'disponibilidad');
+  
+      const horario = {
+        especialista: especialista,
+        especialidad: especialidad,
+        horario: horarioNuevo,
+        duracion: duracion
+        // Add other fields as needed
+      };
+      console.log(horario);
+  
+      const docRef = await this.checkHorarioExist(especialista, especialidad);
+      if (docRef) {
+        await updateDoc(docRef, horario);
+        console.log('Document updated');
+      } else {
+        await addDoc(colHorarios, horario);
+        console.log('Document added');
+      }
+    } catch (error) {
+      console.error('Error adding/updating document:', error);
+      throw error;
+    }
+  }
+  
+  async checkHorarioExist(especialista: string, especialidad: string): Promise<DocumentReference | null> {
+    const horariosRefCol = collection(this.firebase, 'horarios');
+    const q = query(horariosRefCol, where('especialista', '==', especialista), where('especialidad', '==', especialidad));
+    const querySnapshot: QuerySnapshot<any> = await getDocs(q);
+  
+    if (querySnapshot.size === 1) {
+      const docRef = querySnapshot.docs[0].ref;
+      return docRef;
+    }
+    return null;
+  }
+  
   async altaAdministrador(administrador: Administrador, email: string, password: string) {
     this.colUsuarios = collection(this.firebase, 'usuarios');
     await this.createUser(administrador, email, password);
@@ -58,18 +97,17 @@ export class AutenticadorService {
     }
     return null;
   }
+ 
   async getUserCurrentUser(): Promise<any> {
     const uid = this.getToken();
-    if(uid)
-    {
+    if (uid) {
       const usuario = await this.getUserByUID(uid);
       return usuario;
     }
     return null;
   }
-  public getToken(): string|null {
-    if(localStorage.getItem('token')!="")
-    {
+  public getToken(): string | null {
+    if (localStorage.getItem('token') != "") {
       return localStorage.getItem('token');
     }
     return this.tokenSubject.value;
@@ -90,7 +128,7 @@ export class AutenticadorService {
     finally {
     }
   }
- 
+
   checkEmailVerificationStatus() {
     const user = this.auth.currentUser;
 

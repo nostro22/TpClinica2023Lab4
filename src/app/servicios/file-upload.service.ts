@@ -10,7 +10,7 @@ import { limit } from 'firebase/firestore';
 export class FileUploadService {
   constructor(private storage: Storage, private firestore: Firestore) { }
 
-  async uploadFiles(input: HTMLInputElement, fileCategory: string, usuario:string) {
+  async uploadFiles(input: HTMLInputElement, fileCategory: string, usuario: string) {
     if (!input.files) return;
     const fotosPerfilRefCollection = collection(this.firestore, 'fotosPerfil');
     const files: FileList = input.files;
@@ -40,7 +40,7 @@ export class FileUploadService {
     const fotosPerfilRefCollection = collection(this.firestore, 'fotosPerfil');
 
     try {
-      const q = query(fotosPerfilRefCollection, where('usuario', '==', usuario), where('tipo','==','fotoPerfil'));
+      const q = query(fotosPerfilRefCollection, where('usuario', '==', usuario), where('tipo', '==', 'fotoPerfil'));
       const querySnapshot: QuerySnapshot<any> = await getDocs(q);
 
       if (querySnapshot.size === 1) {
@@ -55,9 +55,8 @@ export class FileUploadService {
   }
   async getDownloadURLFromCollectionPerfil2(usuario: string): Promise<string | null> {
     const fotosPerfilRefCollection = collection(this.firestore, 'fotosPerfil');
-
     try {
-      const q = query(fotosPerfilRefCollection, where('usuario', '==', usuario), where('tipo','==','fotoPerfil2'));
+      const q = query(fotosPerfilRefCollection, where('usuario', '==', usuario), where('tipo', '==', 'fotoPerfil2'));
       const querySnapshot: QuerySnapshot<any> = await getDocs(q);
 
       if (querySnapshot.size === 1) {
@@ -70,22 +69,20 @@ export class FileUploadService {
 
     return null;
   }
-  async  getListEspecialidades(): Promise<string[]> {
-    const especialistasCollectionRef = collection(this.firestore, 'usuarios');
-  
+  async getListEspecialidades(): Promise<any[]> {
+    const especialistasCollectionRef = collection(this.firestore, 'especialidades');
+
     try {
       const querySnapshot: QuerySnapshot<any> = await getDocs(especialistasCollectionRef);
       const especialidadesSet = new Set<string>();
-  
+
       querySnapshot.forEach((doc) => {
-        const especialidad = doc.data().especialidad;
-        console.log(especialidad);
-        if(especialidad!=" " && especialidad!=undefined)
-        {
+        const especialidad = doc.data();
+        if (especialidad.especialidad != " " && especialidad.especialidad != undefined) {
           especialidadesSet.add(especialidad);
         }
       });
-  
+
       const especialidadesList = Array.from(especialidadesSet);
       return especialidadesList;
     } catch (error) {
@@ -93,19 +90,84 @@ export class FileUploadService {
       return [];
     }
   }
+  async getTurnosDeEspecialista(especialista: string): Promise<any[]> {
+    const turnosCollectionRef = collection(this.firestore, 'citas');
+  
+    try {
+      const q = query(turnosCollectionRef, where('especialista', '==', especialista));
+      const querySnapshot: QuerySnapshot<any> = await getDocs(q);
+      const turnosList: any[] = [];
+  
+      querySnapshot.forEach((doc) => {
+        const turnos = doc.data();
+        const fecha = new Date(turnos.dia.seconds * 1000 + turnos.dia.nanoseconds / 1000000);
+        turnosList.push({ ...turnos, dia: fecha });
+      });
+  
+      return turnosList;
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      return [];
+    }
+  }
+  
+  async getImagenEspecialidad(especialidad: string): Promise<any> {
+    const especialistasCollectionRef = collection(this.firestore, 'especialidadesImagenes');
+
+    try {
+      const querySnapshot: QuerySnapshot<any> = await getDocs(especialistasCollectionRef);
+      let imagen = "";
+      let imagenDefault = "";
+      querySnapshot.forEach((doc) => {
+        const especialidadDB = doc.data();
+        if (especialidadDB.especialidad == especialidad) {
+          imagen = especialidadDB.imagen;
+        }
+        if (especialidadDB.especialidad == "general") {
+          imagenDefault = especialidadDB.imagen;
+        }
+      });
+      if (imagen != "") {
+        return imagen;
+      }
+      else {
+        return imagenDefault;
+      }
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      return [];
+    }
+  }
+  async getEspecialistaHorarios(especialista: string, especialidad: string): Promise<any[]> {
+    const usuariosRefCollection = collection(this.firestore, 'disponibilidad');
+    const q = query(
+      usuariosRefCollection,
+      where('especialista', '==', especialista),
+      where('especialidad', '==', especialidad),
+    );
+  
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const disponibilidadFire = querySnapshot.docs.map(docSnapshot => docSnapshot.data());
+      return disponibilidadFire;
+    } else {
+      return [];
+    }
+  }
+  
   async esEspecialita(email: string): Promise<boolean> {
     const especialistasCollectionRef = collection(this.firestore, 'usuarios');
     try {
-      const q = query(especialistasCollectionRef, where('email', '==', email),where('tipo','==','especialista'));
+      const q = query(especialistasCollectionRef, where('email', '==', email), where('tipo', '==', 'especialista'));
       const querySnapshot: QuerySnapshot<any> = await getDocs(q);
-  
+
       if (querySnapshot.size === 1) {
         return true;
       }
     } catch (error) {
       console.error('Error fetching document:', error);
     }
-  
+
     return false;
   }
   async esEspecialitaAprobado(email: string): Promise<boolean> {
@@ -127,7 +189,7 @@ export class FileUploadService {
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(
         query(especialistasCollectionRef, where('email', '==', email))
       );
-  
+
       if (querySnapshot.size === 1) {
         querySnapshot.forEach((doc) => {
           deleteDoc(doc.ref);
@@ -159,13 +221,23 @@ export class FileUploadService {
       return false;
     }
   }
-  
+  async subirCita(cita:any): Promise<boolean> {
+    const especialistasCollectionRef = collection(this.firestore, 'citas');
+    try {
+      await addDoc(especialistasCollectionRef,  cita );
+      return true;
+    } catch (error) {
+      console.error('Error adding document:', error);
+      return false;
+    }
+  }
+
   async esPaciente(email: string): Promise<boolean> {
     const especialistasCollectionRef = collection(this.firestore, 'usuarios');
     try {
-      const q = query(especialistasCollectionRef, where('email', '==', email),where('tipo','==','paciente'));
+      const q = query(especialistasCollectionRef, where('email', '==', email), where('tipo', '==', 'paciente'));
       const querySnapshot: QuerySnapshot<any> = await getDocs(q);
-  
+
       if (querySnapshot.size === 1) {
         return true;
       }
@@ -176,13 +248,12 @@ export class FileUploadService {
   }
   async esAdmin(email: string): Promise<boolean> {
     const especialistasCollectionRef = collection(this.firestore, 'administradores');
-    if(email!=null)
-    {
+    if (email != null) {
 
       try {
         const q = query(especialistasCollectionRef, where('email', '==', email));
         const querySnapshot: QuerySnapshot<any> = await getDocs(q);
-        
+
         if (querySnapshot.size === 1) {
           return true;
         }
@@ -190,7 +261,7 @@ export class FileUploadService {
         console.error('Error fetching document:', error);
       }
     }
-  
+
     return false;
   }
 
@@ -201,7 +272,7 @@ export class FileUploadService {
       orderBy('tipo', 'desc'),
       orderBy('nombre', 'desc'),
     );
-  
+
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       const usuarios = querySnapshot.docs.map(docSnapshot => docSnapshot.data());
@@ -216,39 +287,39 @@ export class FileUploadService {
       usuariosRefCollection,
       where('especialista', '==', email)
     );
-  
+
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       const usuarios = querySnapshot.docs.map(docSnapshot => docSnapshot.data());
-      let listaEspecialidades:any=[];
+      let listaEspecialidades: any = [];
       const mapeoActualizado = usuarios.reduce((mapeo, elemento) => {
         const { especialista, especialidad } = elemento;
-        
+
         if (especialista && especialidad) {
           if (!mapeo[especialista]) {
             mapeo[especialista] = [];
           }
-          
-         listaEspecialidades.push(especialidad);
+
+          listaEspecialidades.push(especialidad);
         }
-        
+
         return listaEspecialidades;
       }, {});
-      
-      return  mapeoActualizado ;
+
+      return mapeoActualizado;
     }
-    
+
     return { especialidades: {} };
   }
 
-  async getUsuario(email:string): Promise<any> {
+  async getUsuario(email: string): Promise<any> {
     const usuariosRefCollection = collection(this.firestore, 'usuarios');
     const q = query(
       usuariosRefCollection,
-      where('email','==',email),
+      where('email', '==', email),
       limit(1)
     );
-  
+
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
       const usuario = querySnapshot.docs.map(docSnapshot => docSnapshot.data());
@@ -257,5 +328,5 @@ export class FileUploadService {
     // If no records are found, you can return a default value or throw an exception, depending on your needs.
     return null;
   }
-  
+
 }
