@@ -17,7 +17,7 @@ export class EspecialistaRegistroComponent implements OnInit {
   foto1Url: string | null = null;
   public fotoPerfil: any;
   public fotoPerfil2: any;
-  public especialidadesList: string[] = []; 
+  public especialidadesList: any; 
   public constructor(
     private auth: AutenticadorService,
     private fileUploadService: FileUploadService,

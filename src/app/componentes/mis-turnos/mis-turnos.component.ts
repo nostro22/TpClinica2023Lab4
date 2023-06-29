@@ -119,14 +119,55 @@ export class MisTurnosComponent implements OnInit {
   async finalizarTurno(turno: any) {
     if (await this.notificacionS.showAlertSuccesConfirmacion("Finalizar Turno", "¿Esta Seguro que desea finalizar el turno?", "Si")) {
       turno.estado = "finalizado";
-      turno.resenia = await this.notificacionS.showAlertComentario("Agrege reseña del turno", "Ingrese reseña");
+      turno.resenia = await this.notificacionS.showAlertComentario("Agregue reseña del turno", "Ingrese reseña");
+      this.cargarHistorial(turno.paciente);
       console.log(turno);
       this.firebaseService.subirCita(turno);
     }
   }
 
 
-
+  async cargarHistorial(paciente: any) {
+    let historial: any;
+    console.log(paciente.email);
+    historial = await this.firebaseService.getHistorial(paciente.email);
+    let historialNuevo:any;
+    historialNuevo = await this.notificacionS.showFormulario();
+    console.log(historialNuevo);
+    console.log(historial);
+    
+    if (historial!=null) {
+      historial = historial.historialesList[0];
+      console.log("entre");
+      historial = {
+        uid:historial.uid,
+        altura: historialNuevo?.altura || historial.altura,
+        peso: historialNuevo?.peso || historial.peso,
+        temperatura: historialNuevo?.temperatura || historial.temperatura,
+        presion: historialNuevo?.presion || historial.presion,
+        fechaInforme: new Date(),
+        paciente: paciente,
+        detalles: {
+          ...historial?.detalles,
+          ...historialNuevo?.detalles,
+        },
+        
+      };
+      console.log(historial);
+      
+    } else {
+      historial = {
+        fechaInforme: new Date(),
+        paciente: paciente,
+        ...historialNuevo,
+      };
+    }
+  
+    this.firebaseService.subirHistorial(historial);
+  
+    console.log(historial);
+  }
+  
 
   verComentario(turno: any) {
     this.notificacionS.showAlertSucces("Comentario", turno.comentario);

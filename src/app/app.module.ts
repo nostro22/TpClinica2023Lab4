@@ -27,8 +27,9 @@ import { MiPerfilComponent } from './componentes/mi-perfil/mi-perfil.component';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { MisTurnosComponent } from './componentes/mis-turnos/mis-turnos.component';
-import { TimeFormatPipe } from './pipes/time-format.pipe';
 import { DatePipe } from '@angular/common';
+import { CompartidoModule } from './modulos/compartido/compartido.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Register the 'es' locale
 registerLocaleData(localeEs);
 @NgModule({
@@ -45,7 +46,6 @@ registerLocaleData(localeEs);
     TurnoSolicitarComponent,
     MiPerfilComponent,
     MisTurnosComponent,
-    TimeFormatPipe,
     
   ],
   imports: [
@@ -62,6 +62,9 @@ registerLocaleData(localeEs);
     CommonModule,
     NgxSpinnerModule,
     AppRoutingModule,
+    CompartidoModule,
+    BrowserAnimationsModule
+
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

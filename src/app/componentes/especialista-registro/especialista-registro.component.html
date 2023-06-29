@@ -92,8 +92,8 @@
                             placeholder="Seleccione especialidad">
                         <div class="d-flex gap-2 m-2">
                             <button *ngFor="let especialidad of especialidadesList"
-                                (click)="cambiarEspecialidad(especialidad)" class="btn btn-primary">
-                                {{ especialidad }}
+                                (click)="cambiarEspecialidad(especialidad.especialidad)" class="btn btn-primary">
+                                {{ especialidad.especialidad }}
                             </button>
                         </div>
                         <small

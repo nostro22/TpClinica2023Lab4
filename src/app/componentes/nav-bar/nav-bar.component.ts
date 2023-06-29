@@ -16,13 +16,14 @@ export class NavBarComponent implements OnInit {
   isUserAuthenticated$ = this.isUserAuthenticatedSubject.asObservable();
   isUserAdminSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   isUserAdmin$ = this.isUserAdminSubject.asObservable();
-
+public usuario:any;
   constructor(
     private auth: AutenticadorService,
     private baseDatos: FileUploadService,
     private router: Router,
     private cd: ChangeDetectorRef
   ) { }
+
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -42,6 +43,7 @@ export class NavBarComponent implements OnInit {
         const user = await this.auth.getUserByUID(token);
         const nombre = await user.nombre;
         this.nombreUsuarioSubject.next(nombre);
+        this.usuario = (await this.baseDatos.getUsuario(user.email))[0];
         this.isUserAuthenticatedSubject.next(user);
         const isAdmin = await this.baseDatos.esAdmin(user.email);
         this.isUserAdminSubject.next(isAdmin);
@@ -50,6 +52,9 @@ export class NavBarComponent implements OnInit {
         this.isUserAdminSubject.next(false);
         this.nombreUsuarioSubject.next('Visitante');
       }
+
+     
+
     } catch (error) {
       console.error('Error fetching isAdmin:', error);
     }
@@ -63,11 +68,3 @@ export class NavBarComponent implements OnInit {
     this.router.navigateByUrl('ingreso', { replaceUrl: true });
   }
 }
-
-// Improved Code:
-// - Added BehaviorSubjects for isUserAuthenticated and isUserAdmin.
-// - Updated refreshComponent method to emit new values to the subjects.
-// - Updated the template to use the observables.
-
-// Outside NavBarComponent class:
-// - No components were explicitly mentioned, so none were added.

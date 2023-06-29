@@ -82,7 +82,7 @@
                     <td>{{ turno.horario | timeFormat}}</td>
                     <td>
                         <button class="btn  fab-btn btn-sm" type="button"
-                            [ngClass]="turno.estado=='cancelado' || turno.estado =='rechazado' ? 'btn-danger' : 'btn-primary'">
+                          (click)="cargarHistorial(turno.paciente)"  [ngClass]="turno.estado=='cancelado' || turno.estado =='rechazado' ? 'btn-danger' : 'btn-primary'">
                             {{ turno.estado }}
                         </button>
                     </td>

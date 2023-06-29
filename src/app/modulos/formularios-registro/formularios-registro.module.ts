@@ -8,15 +8,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegistroComponent } from 'src/app/componentes/registro/registro.component';
 import { UsuariosComponent } from 'src/app/componentes/usuarios/usuarios.component';
 import { FormulariosRegistroRoutingModule } from './formularios-registro-routing.module';
-
-
+import { CompartidoModule } from '../compartido/compartido.module';
 @NgModule({
   declarations: [
     PacienteRegistroComponent,
     AdministradorRegistroComponent,
     EspecialistaRegistroComponent,
     RegistroComponent,
-    UsuariosComponent
+    UsuariosComponent,
+   
 
   ],
   imports: [
@@ -24,6 +24,7 @@ import { FormulariosRegistroRoutingModule } from './formularios-registro-routing
     FormulariosRegistroRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    CompartidoModule
     
   ]
 })

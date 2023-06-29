@@ -1,21 +1,43 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Observable, concatAll, distinct, distinctUntilChanged, filter, map, of, toArray } from 'rxjs';
 import { AutenticadorService } from 'src/app/servicios/autenticador.service';
 import { FileUploadService } from 'src/app/servicios/file-upload.service';
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
+
 @Component({
   selector: 'app-mi-perfil',
   templateUrl: './mi-perfil.component.html',
   styleUrls: ['./mi-perfil.component.css']
 })
 export class MiPerfilComponent {
+  public usuario: any;
+  public misTurnos$!: Observable<any>;
   public listadoUsuarios: any = [];
   public especialidades: any = [];
   public habilitado: any;
   public especialidadActiva: string = "";
   public usuarioActual: any;
+  public pacientes: any;
+  public pacienteElegido: any;
   dias = [{ 'activo': false, 'dia': 'lunes' }, { 'activo': false, 'dia': 'martes' }, { 'activo': false, 'dia': 'miércoles' },
   { 'activo': false, 'dia': 'jueves' }, { 'activo': false, 'dia': 'viernes' }, { 'activo': false, 'dia': 'sábado' }]
+
+  //extras
+
+  public misHistoriales$!: Observable<any>;
+  public historialClinicioSelecionado: any;
+  historialClinico: any;
+  historialClinicoFiltrado: any[] = [];
+
+  hayHistorial: boolean = false;
+  hayHistorialFiltrado: boolean = true;
+  btnTodo: boolean = true;
+  btnClinico: boolean = false;
+  btnOdontologo: boolean = false;
+  btnOftalmologo: boolean = false;
+
+  fechaActual: Date = new Date();
 
 
   public selectedValue = "0";
@@ -62,12 +84,36 @@ export class MiPerfilComponent {
 
 
   async ngOnInit() {
+    this.usuario = (await this.auth.getUserCurrentUser()).email;
+    this.usuario = (await this.firebase.getUsuario(this.usuario))[0];
     this.loadUsuarios().then(() => {
       if (this.especialidadActiva != '') {
         this.loadEspecialista();
       }
-    });
+    }).then(() => {
+
+      if (this.listadoUsuarios.tipo === 'especialista') {
+        this.misTurnos$ = this.firebase.getTurnosDeEspecialista(this.usuario.email).pipe(
+          map((turnos: any) => turnos.map((turno: { paciente: any }) => turno.paciente)),
+          concatAll(),
+          distinct((paciente: any) => paciente.email),
+          toArray()
+        );
+
+        this.misTurnos$.subscribe(value => {
+          console.log(value);
+        });
+      }
+    })
+
+
   }
+
+
+
+
+
+
 
   async loadUsuarios() {
     this.notificacionesS.showSpinner();
@@ -106,6 +152,26 @@ export class MiPerfilComponent {
       }
     );
   }
+
+  verComentario(turno: any) {
+    this.notificacionesS.showAlertSucces("Comentario", turno.comentario);
+  }
+  verResenia(turno: any) {
+    this.notificacionesS.showAlertSucces("Reseña", turno.resenia);
+  }
+  async verHistorial(paciente: any) {
+
+    let historial: any;
+    historial = await this.firebase.getHistorial(paciente.email);
+    historial = historial?.historialesList;
+    this.historialClinicioSelecionado = historial[0];
+
+  }
+
+  cerrarHistorial() {
+    this.historialClinicioSelecionado = false;
+  }
+
 
 
 }

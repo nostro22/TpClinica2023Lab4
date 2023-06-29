@@ -24,6 +24,7 @@
     "@sweetalert2/ngx-sweetalert2": "^12.1.0",
     "bootstrap": "^5.3.0",
     "bootstrap-icons": "^1.10.5",
+    "core-js": "^3.31.0",
     "cors": "^2.8.5",
     "firebase": "^9.22.1",
     "ngx-spinner": "^16.0.2",
@@ -31,6 +32,7 @@
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.7.10",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
