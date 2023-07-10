@@ -16,6 +16,7 @@ const EXCEL_EXTENSION = '.xlsx';
 export class UsuariosComponent {
   public usuario: any;
   public listadoUsuarios: any;
+  public listadoUsuarios$: any;
   public habilitaciones: { [email: string]: boolean } = {};
   public misTurnos$!: Observable<any>;
   public misHistoriales$!: Observable<any>;
@@ -135,12 +136,12 @@ export class UsuariosComponent {
     for (const usuario of this.listadoUsuarios) {
       this.habilitaciones[usuario.email] = await this.isUsuarioHabilitado(usuario.email);
     }
-    this.listadoUsuarios = await this.auth.getUserCurrentUser();
-    this.listadoUsuarios = await this.firebase.getUsuario(this.listadoUsuarios.email);
-    this.listadoUsuarios = this.listadoUsuarios[0];
-    this.usuarioActual = this.listadoUsuarios;
-    this.habilitado = await this.isUsuarioHabilitado(this.listadoUsuarios.email);
-    this.especialidades = await this.firebase.getEspecialidadesPorEmail(this.listadoUsuarios.email);
+    let usuarioActualAuxiliar = await this.auth.getUserCurrentUser();
+    usuarioActualAuxiliar = await this.firebase.getUsuario(usuarioActualAuxiliar.email);
+    usuarioActualAuxiliar = usuarioActualAuxiliar[0];
+    this.usuarioActual = usuarioActualAuxiliar;
+    this.habilitado = await this.isUsuarioHabilitado(usuarioActualAuxiliar.email);
+    this.especialidades = await this.firebase.getEspecialidadesPorEmail(usuarioActualAuxiliar.email);
     if (this.habilitado) {
       this.habilitado = "SI";
       this.especialidadActiva = this.especialidades[0];

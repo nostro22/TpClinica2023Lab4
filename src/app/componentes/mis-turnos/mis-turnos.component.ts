@@ -27,6 +27,11 @@ export class MisTurnosComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+
+
+
+
+
     this.usuario = (await this.auth.getUserCurrentUser()).email;
     this.usuario = (await this.firebaseService.getUsuario(this.usuario))[0];
     if (this.usuario.tipo == 'paciente') {
@@ -35,11 +40,12 @@ export class MisTurnosComponent implements OnInit {
     }
     else {
       this.misTurnos$ = this.firebaseService.getTurnosDeEspecialista(this.usuario.email);
-      
+
     }
-    this.historialClinicioSelecionado = await  this.firebaseService.getHistorial(this.usuario.email);
+    this.historialClinicioSelecionado = await this.firebaseService.getHistorial(this.usuario.email);
+    this.historialClinicioSelecionado = this.historialClinicioSelecionado?.historialesList[0];
     console.log(this.historialClinicioSelecionado);
-    
+
     this.misTurnos$.subscribe(turnos => {
       const especialidades = turnos.map((turno: any) => turno.especialidad);
       const especialistas = turnos.map((turno: any) => turno.especialista.email);
@@ -74,17 +80,20 @@ export class MisTurnosComponent implements OnInit {
           diaEscrito = this.datePipe.transform(turno.dia, 'MMM d, yyyy');
           return (turno.especialidad.includes(value) || turno.especialista.email.includes(value) || turno.especialista.nombre.includes(value)
             || turno.horario.includes(value) || turno.estado.includes(value) || turno.especialidad.includes(value) || diaEscrito.includes(value)
-
           )
         }))
       );
 
     }
     else {
+
+
+      //let esta =  this.filtroHistorial(turno.paciente.email, value);
       this.misTurnos$ = this.firebaseService.getTurnosDeEspecialista(this.usuario.email).pipe(
         map(turnos => turnos.filter(turno => {
+
           diaEscrito = this.datePipe.transform(turno.dia, 'MMM d, yyyy');
-          console.log(turno.paciente.email);
+         // console.log( esta)
           return (turno.especialidad.includes(value) || turno.paciente.nombre.includes(value) || turno.horario.includes(value)
             || turno.estado.includes(value) || diaEscrito.includes(value)
           )
@@ -93,6 +102,30 @@ export class MisTurnosComponent implements OnInit {
     }
   }
 
+  filtroHistorial(paciente: any, busqueda: string) {
+    let historialABuscar = this.firebaseService.getHistorial(paciente);
+    return historialABuscar.then(historial => {
+      historial = historial?.historialesList[0];
+      return this.searchValue(historial, busqueda);
+    });
+  }
+  
+  searchValue(historial:any, search:any) {
+    if (
+      historial &&
+      (String(historial.altura) ==(search) ||
+        String(historial.fecha) == (search) ||
+        String(historial.peso) == (search) ||
+        String(historial.presion)==(search) ||
+        String(historial.temperatura)==(search))
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  
 
   clickPaciente(paciente: any) {
     this.pacienteElegido = paciente;
@@ -107,9 +140,9 @@ export class MisTurnosComponent implements OnInit {
     });
   }
 
-  verHistorial(usuario:any)
-  {
-
+  async verHistorial(usuario: any) {
+    this.historialClinicioSelecionado = await this.firebaseService.getHistorial(usuario.email);
+    this.historialClinicioSelecionado = this.historialClinicioSelecionado.historialesList[0];
   }
   limpiarFiltros() {
     this.filtro = "";
@@ -156,16 +189,16 @@ export class MisTurnosComponent implements OnInit {
     let historial: any;
     console.log(paciente.email);
     historial = await this.firebaseService.getHistorial(paciente.email);
-    let historialNuevo:any;
+    let historialNuevo: any;
     historialNuevo = await this.notificacionS.showFormulario();
     console.log(historialNuevo);
     console.log(historial);
-    
-    if (historial!=null) {
+
+    if (historial != null) {
       historial = historial.historialesList[0];
       console.log("entre");
       historial = {
-        uid:historial.uid,
+        uid: historial.uid,
         altura: historialNuevo?.altura || historial.altura,
         peso: historialNuevo?.peso || historial.peso,
         temperatura: historialNuevo?.temperatura || historial.temperatura,
@@ -176,10 +209,10 @@ export class MisTurnosComponent implements OnInit {
           ...historial?.detalles,
           ...historialNuevo?.detalles,
         },
-        
+
       };
       console.log(historial);
-      
+
     } else {
       historial = {
         fechaInforme: new Date(),
@@ -187,12 +220,12 @@ export class MisTurnosComponent implements OnInit {
         ...historialNuevo,
       };
     }
-  
+
     this.firebaseService.subirHistorial(historial);
-  
+
     console.log(historial);
   }
-  
+
 
   verComentario(turno: any) {
     this.notificacionS.showAlertSucces("Comentario", turno.comentario);

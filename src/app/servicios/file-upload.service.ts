@@ -91,10 +91,10 @@ export class FileUploadService {
       return [];
     }
   }
-  getTurnosDeEspecialista(especialista: string): Observable<any[]> {
+  getTurnosDeEspecialista(especialistaEmail: string): Observable<any[]> {
     const turnosCollectionRef = collection(this.firestore, 'citas');
 
-    const q = query(turnosCollectionRef, where('especialista.email', '==', especialista));
+    const q = query(turnosCollectionRef, where('especialista.email', '==', especialistaEmail));
     const queryPromise = getDocs(q);
 
     return from(queryPromise.then((querySnapshot: QuerySnapshot<any>) => {
@@ -163,7 +163,7 @@ export class FileUploadService {
 
       querySnapshot.forEach((doc) => {
         const turnos = doc.data();
-        const fecha = new Date(turnos.dia.seconds * 1000 + turnos.dia.nanoseconds / 1000000);
+        const fecha = new Date(turnos.dia?.seconds * 1000 + turnos.dia?.nanoseconds / 1000000);
         turnosList.push({ ...turnos, dia: fecha });
       });
 
@@ -184,7 +184,6 @@ export class FileUploadService {
         const historial = docSnapshot.data();
         return { ...historial };
       });
-  console.log(historialesList);
       return { historialesList };
     } else {
       return null;

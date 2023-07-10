@@ -147,7 +147,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <button *ngIf="!habilitaciones[resultado.email] && resultado.tipo =='especialista'"
-                                        class="btn btn-primary" (click)="accionHabilitar(resultado.email)">
+                                        class="btn btn-success" (click)="accionHabilitar(resultado.email)">
                                         Habilitar
                                     </button>
                                     <button *ngIf="habilitaciones[resultado.email] && resultado.tipo =='especialista'"
