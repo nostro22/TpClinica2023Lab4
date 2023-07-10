@@ -24,6 +24,7 @@ export class IngresoComponent {
     return this.formularioRegistroUsuario.get('clave') as FormControl;
   }
 
+  
 
   public formularioRegistroUsuario = this.fb.group({
     'email': ['', [Validators.required, Validators.email]],

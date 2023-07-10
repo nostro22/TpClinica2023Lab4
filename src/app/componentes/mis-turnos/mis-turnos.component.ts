@@ -15,6 +15,11 @@ export class MisTurnosComponent implements OnInit {
   public especialistas: any;
   public pacientes: any;
   public usuario: any;
+
+  public historialClinicioSelecionado: any;
+  public pacienteElegido: any;
+  historialClinico: any;
+
   constructor(private datePipe: DatePipe, private firebaseService: FileUploadService, private auth: AutenticadorService, private notificacionS: NotificacionesService) { }
   filtro: string = '';
   public filterByInput() {
@@ -30,9 +35,11 @@ export class MisTurnosComponent implements OnInit {
     }
     else {
       this.misTurnos$ = this.firebaseService.getTurnosDeEspecialista(this.usuario.email);
-
+      
     }
-
+    this.historialClinicioSelecionado = await  this.firebaseService.getHistorial(this.usuario.email);
+    console.log(this.historialClinicioSelecionado);
+    
     this.misTurnos$.subscribe(turnos => {
       const especialidades = turnos.map((turno: any) => turno.especialidad);
       const especialistas = turnos.map((turno: any) => turno.especialista.email);
@@ -86,6 +93,24 @@ export class MisTurnosComponent implements OnInit {
     }
   }
 
+
+  clickPaciente(paciente: any) {
+    this.pacienteElegido = paciente;
+    console.log(paciente);
+    this.historialClinicioSelecionado = false;
+    this.firebaseService.getTurnosDePaciente(paciente.email).subscribe(cita => {
+      console.log(cita);
+
+      const historialFiltrado = cita.filter(unaCita => unaCita.especialista.email == this.usuario.email);
+      this.historialClinico = of(historialFiltrado);
+
+    });
+  }
+
+  verHistorial(usuario:any)
+  {
+
+  }
   limpiarFiltros() {
     this.filtro = "";
     this.filterTurnosPaciente(this.filtro);

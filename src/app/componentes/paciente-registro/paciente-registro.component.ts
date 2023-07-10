@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Paciente } from 'src/app/clases/paciente';
@@ -10,13 +10,14 @@ import { NotificacionesService } from 'src/app/servicios/notificaciones.service'
   templateUrl: './paciente-registro.component.html',
   styleUrls: ['./paciente-registro.component.css']
 })
-export class PacienteRegistroComponent {
+export class PacienteRegistroComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('fileInput') fileInput2!: ElementRef<HTMLInputElement>;
   foto1Url: string | null = null;
   foto2Url: string | null = null;
   public fotoPerfil: any;
   public fotoPerfil2: any;
+  public capchaValorGenerado:string="";
   onFileDivClick(): void {
     this.fileInput.nativeElement.click();
   }
@@ -31,7 +32,12 @@ export class PacienteRegistroComponent {
     private notificacionesS: NotificacionesService,
     private router: Router
   ) { }
-
+  ngOnInit(): void {
+    this.capchaValorGenerado = this.generateRandomString(6);
+  }
+  captchaNoValido() {
+    return this.capchaValorGenerado != this.capcha.value
+  }
 
   get nombre() {
     return this.formularioRegistroUsuario.get('nombre') as FormControl;
@@ -78,7 +84,9 @@ export class PacienteRegistroComponent {
   get upload2() {
     return document.getElementById("foto2") as HTMLInputElement;
   }
-
+  get capcha() {
+    return this.formularioRegistroUsuario.get('capcha') as FormControl;
+  }
   public formularioRegistroUsuario = this.fb.group({
     'nombre': ['', [Validators.required, this.spacesValidator]],
     'apellido': ['', [Validators.required, this.spacesValidator]],
@@ -90,7 +98,21 @@ export class PacienteRegistroComponent {
     'clave': ['', [Validators.required, Validators.minLength(6)]],
     'foto1': ['', [Validators.required]],
     'foto2': ['', [Validators.required]],
+    'capcha': ['', [Validators.required]],
   });
+
+  generateRandomString(num: number) {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result1 = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < num; i++) {
+      result1 += characters.charAt(
+        Math.floor(Math.random() * charactersLength)
+      );
+    }
+    return result1;
+  }
 
   private spacesValidator(control: AbstractControl): null | object {
     const nombre = <string>control.value;

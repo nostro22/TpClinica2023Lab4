@@ -160,12 +160,12 @@ export class NotificacionesService {
         const temperatura = parseFloat(temperaturaInput.value);
         const presion = parseFloat(presionInput.value);
   
-        const detalles: { clave: string, valor: string }[] = [];
+        const detalles: any[] = [];
   
         for (let i = 0; i < detallesInputs.length; i++) {
           const clave = claveInputs[i].value;
           const valor = detallesInputs[i].value;
-          detalles.push({ clave, valor });
+          detalles.push( {key:clave, value : valor});
         }
   
         return { altura, peso, temperatura, presion, detalles };

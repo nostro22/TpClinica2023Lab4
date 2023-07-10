@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { Especialista } from 'src/app/clases/especialista';
 import { AutenticadorService } from 'src/app/servicios/autenticador.service';
 import { FileUploadService } from 'src/app/servicios/file-upload.service';
@@ -18,15 +17,33 @@ export class EspecialistaRegistroComponent implements OnInit {
   public fotoPerfil: any;
   public fotoPerfil2: any;
   public especialidadesList: any; 
+  public capchaValorGenerado:string="";
   public constructor(
     private auth: AutenticadorService,
     private fileUploadService: FileUploadService,
     private fb: FormBuilder,
     private notificacionesS: NotificacionesService,
     private router: Router
-  ) { }
+  ) { 
+    
+  }
   async ngOnInit(): Promise<void> {
-   this.especialidadesList = await this.fileUploadService.getListEspecialidades();
+    this.especialidadesList = await this.fileUploadService.getListEspecialidades();
+    this.capchaValorGenerado = this.generateRandomString(6);
+
+  }
+
+  generateRandomString(num: number) {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result1 = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < num; i++) {
+      result1 += characters.charAt(
+        Math.floor(Math.random() * charactersLength)
+      );
+    }
+    return result1;
   }
 
   onFileDivClick(): void {
@@ -71,6 +88,9 @@ export class EspecialistaRegistroComponent implements OnInit {
   get especialidad() {
     return this.formularioRegistroUsuario.get('especialidad') as FormControl;
   }
+  get especialidad2() {
+    return this.formularioRegistroUsuario.get('especialidad2') as FormControl;
+  }
 
   get email() {
     return this.formularioRegistroUsuario.get('email') as FormControl;
@@ -91,6 +111,9 @@ export class EspecialistaRegistroComponent implements OnInit {
   get upload1() {
     return document.getElementById("foto1") as HTMLInputElement;
   }
+  get capcha() {
+    return this.formularioRegistroUsuario.get('capcha') as FormControl;
+  }
 
 
   public formularioRegistroUsuario = this.fb.group({
@@ -99,11 +122,12 @@ export class EspecialistaRegistroComponent implements OnInit {
     'edad': ['', [Validators.required, Validators.min(18), Validators.max(99)]],
     'dni': ['', [Validators.required, Validators.pattern(/^[1-9]\d{6,7}$/)]],
     'especialidad': ['', Validators.required],
+    'especialidad2': ['', ],
     'email': ['', [Validators.required, Validators.email]],
     'terminos': ['', Validators.requiredTrue],
     'clave': ['', [Validators.required, Validators.minLength(6)]],
     'foto1': ['', [Validators.required]],
-
+    'capcha': ['', [Validators.required]],
   });
 
   private spacesValidator(control: AbstractControl): null | object {
@@ -115,6 +139,8 @@ export class EspecialistaRegistroComponent implements OnInit {
       : null;
   }
 
+  
+  
   setEspecialidad(valor: string) {
     this.especialidad.setValue(valor);
   }
@@ -128,6 +154,10 @@ export class EspecialistaRegistroComponent implements OnInit {
     this.terminos.setValue(true);
   }
 
+  captchaNoValido() {
+    return this.capchaValorGenerado != this.capcha.value
+  }
+
   async registrarEspecialista() {
     this.notificacionesS.showSpinner();
     if (this.formularioRegistroUsuario.valid) {
@@ -137,7 +167,7 @@ export class EspecialistaRegistroComponent implements OnInit {
           if (this.email.value != null) {
             this.fotoPerfil = await this.fileUploadService.getDownloadURLFromCollectionPerfil(this.email.value);
             this.fotoPerfil2 = await this.fileUploadService.getDownloadURLFromCollectionPerfil2(this.email.value);
-            const usuario = new Especialista(this.dni.value, this.email.value, this.nombre.value, this.apellido.value, this.edad.value, this.especialidad.value, this.fotoPerfil);
+            const usuario = new Especialista(this.dni.value, this.email.value, this.nombre.value, this.apellido.value, this.edad.value, this.especialidad.value, this.especialidad2.value, this.fotoPerfil);
             this.auth.altaEspecialista(usuario, usuario.email, this.clave.value)
               .then(() => {
                 this.notificacionesS.showAlertSucces("Usuario registrado con éxito","Verifique correo electronico para continuar");
@@ -149,8 +179,6 @@ export class EspecialistaRegistroComponent implements OnInit {
                 console.error('Error al registrar usuario:', error);
               });
             }
-            
-            
           });
         } else {
         this.notificacionesS.hideSpinner();

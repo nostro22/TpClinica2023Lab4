@@ -14,4 +14,17 @@
     transform: scale(1.05);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   }
+  .deformed-text {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    transform: rotate(-5deg) skewX(-10deg);
+    background-color: #252525;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  }
   

@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Observable, concatAll, distinct, distinctUntilChanged, filter, map, of, toArray } from 'rxjs';
 import { AutenticadorService } from 'src/app/servicios/autenticador.service';
 import { FileUploadService } from 'src/app/servicios/file-upload.service';
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
 import * as XLSX from 'xlsx';
-
+import * as FileSaver from 'file-saver';
+const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+const EXCEL_EXTENSION = '.xlsx';
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
@@ -18,7 +20,7 @@ export class UsuariosComponent {
   public misTurnos$!: Observable<any>;
   public misHistoriales$!: Observable<any>;
   public historialClinicioSelecionado: any;
-  
+
   historialClinico: any;
   historialClinicoFiltrado: any[] = [];
   hayHistorial: boolean = false;
@@ -30,51 +32,62 @@ export class UsuariosComponent {
   fechaActual: Date = new Date();
 
   options: { value: number; label: string; isSelected: boolean; }[] = [
-    { value: 0, label: 'Habilitaciones', isSelected: false },
+    { value: 0, label: 'Habilitaciones y datos', isSelected: false },
     { value: 1, label: 'Registro Paciente', isSelected: false },
     { value: 2, label: 'Registro Especialista', isSelected: false },
     { value: 3, label: 'Registro Administrador', isSelected: false }
   ];
   selectedOption = 0;
   public selectedValue = "0";
-  constructor(private firebase: FileUploadService, private notificacionesS: NotificacionesService, private auth:AutenticadorService) {
+  constructor(private firebase: FileUploadService, private notificacionesS: NotificacionesService, private auth: AutenticadorService) {
   }
-  downloadExcelTable(data: any[], filename: string) {
-    // Crear un nuevo libro de Excel
-    const workbook = XLSX.utils.book_new();
-
-    // Convertir el arreglo de datos a una hoja de cálculo
-    const worksheet = XLSX.utils.json_to_sheet(data);
-
-    // Agregar la hoja de cálculo al libro
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-    // Convertir el libro a un archivo Excel binario
-    const excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-
-    // Crear un Blob con los datos del Excel
-    const blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-    // Crear un enlace de descarga
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-
-    // Simular un clic en el enlace para iniciar la descarga
-    link.click();
+  exportAsExcelFile(json: any[], excelFileName: string): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    this.saveAsExcelFile(excelBuffer, excelFileName);
   }
 
-  onDownloadExcelClick( usuario:any) {
-    console.log(usuario);
-    const tableData = [
-      usuario
-      // Agrega más filas según sea necesario
-    ];
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+    );
+  }
 
+
+  async onDownloadExcelClick(usuario: any) {
+    const citasUsuario = await this.firebase.getTurnosDePaciente(usuario.email).toPromise();
     const filename = 'table.xlsx';
-
-    this.downloadExcelTable(tableData, filename);
+  
+    if (citasUsuario) {
+      console.log(citasUsuario);
+      citasUsuario.map(cita =>{
+        cita.especialista=cita.especialista.nombre;
+        cita.paciente = cita.paciente.nombre;
+      })
+      console.log(citasUsuario);
+      this.exportAsExcelFile(citasUsuario, filename);
+    } else {
+      // Handle the case when citasUsuario is undefined
+      console.log('citasUsuario is undefined');
+    }
   }
+  
+  async descargarHojaCalculoTodos() {
+    let listadoTodosLosUsuarios = await this.firebase.getUsuarios();
+   
+    const filename = 'ListaCompleta.xlsx';
+    this.exportAsExcelFile(listadoTodosLosUsuarios, filename);
+  }
+
 
 
   async onValueChange(selectedValue: number): Promise<void> {
@@ -94,7 +107,7 @@ export class UsuariosComponent {
   async ngOnInit() {
     this.options[0].isSelected = true;
     this.loadUsuarios();
-    
+
     this.usuario = (await this.auth.getUserCurrentUser()).email;
     this.usuario = (await this.firebase.getUsuario(this.usuario))[0];
     this.loadUsuarios().then(() => {
@@ -166,7 +179,7 @@ export class UsuariosComponent {
 
       const historialFiltrado = cita.filter(unaCita => unaCita.especialista.email == this.usuario.email);
       this.historialClinico = of(historialFiltrado);
- 
+
     });
   }
 

@@ -15,6 +15,7 @@ export class AdministradorRegistroComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   foto1Url: string | null = null;
   public fotoPerfil: any;
+  public capchaValorGenerado:string="";
   public especialidadesList: string[] = [];
   public constructor(
     private auth: AutenticadorService,
@@ -25,13 +26,28 @@ export class AdministradorRegistroComponent {
   ) { }
   async ngOnInit(): Promise<void> {
     this.especialidadesList = await this.fileUploadService.getListEspecialidades();
+    this.capchaValorGenerado = this.generateRandomString(6);
   }
 
   onFileDivClick(): void {
     this.fileInput.nativeElement.click();
   }
 
-
+  captchaNoValido() {
+    return this.capchaValorGenerado != this.capcha.value
+  }
+  generateRandomString(num: number) {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result1 = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < num; i++) {
+      result1 += characters.charAt(
+        Math.floor(Math.random() * charactersLength)
+      );
+    }
+    return result1;
+  }
 
   onFileSelected(event: any, photoId: string) {
     const file = event.target.files[0];
@@ -80,6 +96,9 @@ export class AdministradorRegistroComponent {
   get upload1() {
     return document.getElementById("foto1") as HTMLInputElement;
   }
+  get capcha() {
+    return this.formularioRegistroUsuario.get('capcha') as FormControl;
+  }
 
 
   public formularioRegistroUsuario = this.fb.group({
@@ -91,6 +110,7 @@ export class AdministradorRegistroComponent {
     'terminos': ['', Validators.requiredTrue],
     'clave': ['', [Validators.required, Validators.minLength(6)]],
     'foto1': ['', [Validators.required]],
+    'capcha': ['', [Validators.required]],
 
   });
 
@@ -125,8 +145,6 @@ export class AdministradorRegistroComponent {
                 console.error('Error al registrar usuario:', error);
               });
             }
-            
-            
           });
         } else {
           this.notifiacionS.hideSpinner();

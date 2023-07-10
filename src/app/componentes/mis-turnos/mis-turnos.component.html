@@ -63,6 +63,44 @@
                     <h3 *ngIf="usuario?.tipo=='especialista'" class="d-block text-warning">Especialista: {{ usuario.nombre }}</h3>
                     <h3 *ngIf="usuario?.tipo=='paciente'" class="d-block text-warning">Obra Social: {{ usuario.obraSocial }}</h3>
                 </div>
+
+                <!-- <div>
+                    <div >
+
+                        <table class="table table-striped table-dark container">
+                            <thead class="table-dark">
+                                <div class=" d-flex">
+                                    <h3 class="d-block text-warning"> Historial Clinico</h3>
+                                    <h3 class="d-block text-warning">{{historialClinicioSelecionado?.paciente.nombre|json}}</h3>
+                                </div>
+                                <tr>
+                                    <th>Fecha Emision</th>
+                                    <th>Altura</th>
+                                    <th>Peso</th>
+                                    <th>Temperatura </th>
+                                    <th>Presion</th>
+                                    <th>Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ historialClinicioSelecionado?.fechaInforme | argentinaDate}}</td>
+                                    <td>{{ historialClinicioSelecionado?.altura }}</td>
+                                    <td>{{ historialClinicioSelecionado?.peso }}</td>
+                                    <td>{{ historialClinicioSelecionado?.temperatura }}</td>
+                                    <td>{{ historialClinicioSelecionado?.presion }}</td>
+                                    <td>
+                                        <li *ngFor="let detalle of (historialClinicioSelecionado.detalles )">
+                                            {{ detalle?.key}}: {{ detalle?.value}}
+                                        </li>
+                                    </td>
+        
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> -->
+
                 <tr>
                     <th *ngIf="usuario?.tipo=='paciente'">Especialista</th>
                     <th *ngIf="usuario?.tipo=='especialista'">Paciente</th>

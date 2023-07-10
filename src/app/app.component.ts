@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { trigger, transition, style, query, animate, group } from '@angular/animations';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -77,6 +77,25 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'tp2Clinica';
+  animationState: string; // Add the animationState property
+  constructor(private router: Router) {
+    this.animationState = 'default'; // Set the initial animation state
+
+    router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects;
+        // Update the animation state based on the current route URL
+        if (url.includes('/quien')) {
+          this.animationState = 'quienPage';
+        } else if (url.includes('/misTurnos')) {
+          this.animationState = 'misTurnosPage';
+        } else {
+          this.animationState = 'default';
+        }
+      }
+    });
+  }
+
   prepareRoute(outlet: RouterOutlet) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }

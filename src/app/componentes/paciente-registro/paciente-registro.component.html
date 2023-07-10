@@ -152,6 +152,25 @@
 
                 <div class="row">
                     <div class="col-md-12 mb-5">
+                        <div class="col-6 d-flex justify-content-center aling-items-center">
+                            <div class="deformed-text">
+                                {{capchaValorGenerado}}
+                            </div>
+                            <div>
+                                <label for="capcha" class="form-label" for="capcha">
+                                    Ingrese captcha
+                                </label>
+                                <input formControlName="capcha" type="text" class="form-control" id="capcha">
+                                <div *ngIf=" captchaNoValido() && formularioRegistroUsuario.controls.capcha.touched"
+                                    class="invalid">
+                                    Debe coincidir el captcha
+                                </div>
+                                <div *ngIf="formularioRegistroUsuario.controls.capcha.errors?.['required'] &&
+                                        formularioRegistroUsuario.controls.capcha.touched" class="invalid">
+                                    Es necesario completar el captcha
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-check">
                             <input formControlName="terminos" type="checkbox" class="form-check-input" id="terminos">
                             <label for="recordar" class="form-check-label" for="terminos">

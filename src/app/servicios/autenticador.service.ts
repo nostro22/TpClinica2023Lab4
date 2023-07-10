@@ -28,7 +28,14 @@ export class AutenticadorService {
   }
   async altaEspecialista(especialista: Especialista, email: string, password: string) {
     this.colUsuarios = collection(this.firebase, 'usuarios');
+    let colEspecialidades = collection(this.firebase, 'especialidades');
     await this.createUser(especialista, email, password);
+    const docRef = await addDoc(this.colUsuarios, []);
+      await updateDoc(docRef, {especialidad:especialista.especialidad,especialista:especialista.email});
+      if(especialista.especialidad2!="")
+      {
+        await updateDoc(docRef, {especialidad:especialista.especialidad2,especialista:especialista.email});
+      }
   }
   async altaHorario(especialista: string, especialidad: string, horarioNuevo: any, duracion:string) {
     try {

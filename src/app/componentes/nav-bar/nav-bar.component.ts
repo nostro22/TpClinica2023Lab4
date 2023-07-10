@@ -8,22 +8,23 @@ import { BehaviorSubject } from 'rxjs';
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush // Add this line
 })
 export class NavBarComponent implements OnInit {
   nombreUsuarioSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Visitante');
   nombreUsuario$ = this.nombreUsuarioSubject.asObservable();
-  isUserAuthenticatedSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  isUserAuthenticatedSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false); // Change type to boolean
   isUserAuthenticated$ = this.isUserAuthenticatedSubject.asObservable();
-  isUserAdminSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  isUserAdminSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false); // Change type to boolean
   isUserAdmin$ = this.isUserAdminSubject.asObservable();
-public usuario:any;
+  public usuario: any;
+
   constructor(
     private auth: AutenticadorService,
     private baseDatos: FileUploadService,
     private router: Router,
     private cd: ChangeDetectorRef
-  ) { }
-
+  ) {}
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -44,7 +45,7 @@ public usuario:any;
         const nombre = await user.nombre;
         this.nombreUsuarioSubject.next(nombre);
         this.usuario = (await this.baseDatos.getUsuario(user.email))[0];
-        this.isUserAuthenticatedSubject.next(user);
+        this.isUserAuthenticatedSubject.next(true); // Set the value to true for an authenticated user
         const isAdmin = await this.baseDatos.esAdmin(user.email);
         this.isUserAdminSubject.next(isAdmin);
       } else {
@@ -52,9 +53,6 @@ public usuario:any;
         this.isUserAdminSubject.next(false);
         this.nombreUsuarioSubject.next('Visitante');
       }
-
-     
-
     } catch (error) {
       console.error('Error fetching isAdmin:', error);
     }

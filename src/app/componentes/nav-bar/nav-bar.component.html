@@ -11,7 +11,7 @@
           </a>
 
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-            <li *ngIf="usuario.tipo=='paciente'" >
+            <li *ngIf="usuario?.tipo=='paciente'" >
               <a routerLink="turno/paciente" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
                 Turno paciente
@@ -23,7 +23,7 @@
                 Turnos
               </a>
             </li>
-            <li *ngIf="usuario.tipo=='paciente' ||usuario.tipo=='especialista' ">
+            <li *ngIf="usuario?.tipo=='paciente' ||usuario?.tipo=='especialista' ">
               <a routerLink="misTurnos" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>
                 Mis Turnos
@@ -53,13 +53,13 @@
                 Cerrar Sección
               </a>
             </li>
-            <li *ngIf="(isUserAdmin$ | async)||usuario.tipo=='especialista' ">
+            <li *ngIf="(isUserAdmin$ | async)||usuario?.tipo=='especialista' ">
               <a routerLink="lazy/usuarios" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
                 Seccion Usuarios
               </a>
             </li>
-            <li *ngIf="usuario.tipo=='especialista' ">
+            <li *ngIf="usuario?.tipo=='especialista' ">
               <a routerLink="usuarios" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
                 Seccion Pacientes
