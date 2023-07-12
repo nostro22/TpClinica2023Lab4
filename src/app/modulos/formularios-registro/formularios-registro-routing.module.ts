@@ -6,7 +6,7 @@ import { IsAdminGuard } from 'src/app/guards/is-admin.guard';
 
 const routes: Routes = [
   {path:"registro", title:"Registro", component: RegistroComponent},
-  {path:"usuarios", title:"Usuarios", component: UsuariosComponent, canActivate:[IsAdminGuard]}
+  {path:"usuarios", title:"Usuarios", component: UsuariosComponent}
 ];
 
 @NgModule({

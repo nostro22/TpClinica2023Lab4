@@ -53,14 +53,20 @@
                 Cerrar Sección
               </a>
             </li>
-            <li *ngIf="(isUserAdmin$ | async)||usuario?.tipo=='especialista' ">
+            <li *ngIf="(isUserAdmin$ | async)">
               <a routerLink="lazy/usuarios" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
                 Seccion Usuarios
               </a>
             </li>
+            <li *ngIf="(isUserAdmin$ | async)">
+              <a routerLink="graficos" class="nav-link text-white">
+                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
+                Graficos
+              </a>
+            </li>
             <li *ngIf="usuario?.tipo=='especialista' ">
-              <a routerLink="usuarios" class="nav-link text-white">
+              <a routerLink="lazy/usuarios" class="nav-link text-white">
                 <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>
                 Seccion Pacientes
               </a>

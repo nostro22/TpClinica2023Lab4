@@ -30,6 +30,11 @@ import { MisTurnosComponent } from './componentes/mis-turnos/mis-turnos.componen
 import { DatePipe } from '@angular/common';
 import { CompartidoModule } from './modulos/compartido/compartido.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { GraficosComponent } from './componentes/graficos/graficos.component';
+import { HoverColorDirective } from './directivas/hover-color.directive';
+import { AlertSpanDirective } from './directivas/alert-span.directive';
+import { ToastSpanDirective } from './directivas/toast-span.directive';
+
 // Register the 'es' locale
 registerLocaleData(localeEs);
 @NgModule({
@@ -46,6 +51,11 @@ registerLocaleData(localeEs);
     TurnoSolicitarComponent,
     MiPerfilComponent,
     MisTurnosComponent,
+    GraficosComponent,
+    HoverColorDirective,
+    AlertSpanDirective,
+    ToastSpanDirective,
+
     
   ],
   imports: [

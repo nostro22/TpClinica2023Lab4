@@ -1,0 +1,165 @@
+<div class="contenedor-estadisticas row d-flex bg-success bg-opacity-50">
+
+  <!-- LOG DE USUARIOS -->
+  <div class="col-4 " style="max-height: 50vh; overflow-y: auto;">
+
+    <div  class="p-2" style="background-color: rgba(0,156,170,.7);">
+
+      <div id="pdflogs" style="max-height: 60vh; overflow-y: auto;">
+        <h3> Fecha de Informe: {{fechaDeHoy() }}</h3>
+        <h1 style="text-align: center; font-size: 1.5rem; margin-left: auto; margin-right: auto;">
+          <img src="../../../favicon.ico" style="width: 100px" alt="logo" />
+          Registro de inicio
+          de sesión de los usuarios
+        </h1>
+
+        <div data-html2canvas-ignore="true" >
+          <button class="btn btn-primary" type="button" (click)="descargarPDFLogs()">
+            Descargar PDF
+          </button>
+          <button class="btn btn-info" type="button" (click)="descargarExcelLogs()">
+            Descargar EXCEL
+          </button>
+        </div>
+        <table  class="table table-info table-striped table-bordered table-sm">
+          <thead>
+            <tr class="table-warning">
+              <th scope="col">FECHA</th>
+              <th scope="col">PERFIL</th>
+              <th scope="col">NOMBRE</th>
+              <th scope="col">APELLIDO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tr-tabla table-info" *ngFor="let log of listaLogs">
+              <td>
+                {{ log.fecha }}
+              </td>
+              <td>{{ log.usuario[0].tipo }}</td>
+              <td>{{ log.usuario[0].nombre }}</td>
+              <td>{{ log.usuario[0].apellido }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TURNOS POR ESPECIALIDAD -->
+
+  <div class="col-4" style="max-height: 60vh; overflow-y: auto;">
+
+    <div class="p-2" style="background-color: rgba(0,156,170,.7);">
+
+      <div id="pdfTurnosPorEspecialidad">
+        <h3> Fecha de Informe: {{fechaDeHoy() }}</h3>
+        <h1 style="text-align: center; font-size: 1.5rem">
+          <img src="../../../favicon.ico" style="width: 100px" alt="logo" />
+          Grafico de turnos dados por especialidad.
+        </h1>
+        <div data-html2canvas-ignore="true">
+          <button type="button" class="btn btn-primary" (click)="descargarPDFTurnosPorEspecialidad()">
+            Descargar PDF
+          </button>
+          <button type="button" class="btn btn-info" (click)="descargarExcelTurnosPorEspecialidad()">
+            Descargar EXCEL
+          </button>
+        </div>
+        <div style="margin-top: 3rem tpesp">
+          <canvas id="turnosPorEspecialidad"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TURNOS POR DIA -->
+
+  <div class="col-4" style="max-height: 60vh; overflow-y: auto;">
+
+    <div class="p-2" style="background-color: rgba(0,156,170,.7);;">
+
+      <div id="pdfTurnosPorDia">
+        <h3> Fecha de Informe: {{fechaDeHoy() }}</h3>
+        <h1>
+          <img src="../../../favicon.ico" style="width: 100px" alt="logo" />
+          Turnos dados por día
+        </h1>
+        <div data-html2canvas-ignore="true">
+          <button type="button" class="btn btn-primary" (click)="descargarPDFTurnosPorDia()">
+            Descargar PDF
+          </button>
+          <button type="button" class="btn btn-info" (click)="descargarExcelTurnosPorDia()">
+            Descargar EXCEL
+          </button>
+        </div>
+        <div style=" width: 50%;">
+          <canvas id="turnosPorDia"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- TURNOS SOLICITADOS POR MEDICO EN UN LAPSO DE TIEMPO -->
+
+  <div class="col-6 my-2" style="max-height: 60vh; overflow-y: auto;">
+    <div class="p-2" style="background-color: rgba(0,156,170,.7);">
+      
+      <div id="pdfTurnosSolicitadosPorMedico">
+        <h3> Fecha de Informe: {{fechaDeHoy() }}</h3>
+        <h1 style="text-align: center; font-size: 1.5rem">
+          <img src="../../../favicon.ico" style="width: 100px" alt="logo" />
+          TURNOS SOLICITADOS POR MÉDICO DE LOS PRÓXIMOS 7 DÍAS
+        </h1>
+        <div class="d-flex justify-content-evenly">
+
+          <div data-html2canvas-ignore="true">
+            <button type="button" class="btn btn-primary" (click)="descargarPDFTurnosSolicitadosPorMedico()">
+              Descargar PDF
+            </button>
+            <button type="button" class="btn btn-info" (click)="descargarExcelTurnosSolicitadosPorMedico()">
+              Descargar EXCEL
+            </button>
+          </div>
+        </div>
+        <div style="margin-top: 1rem; width: 35%; margin-left: 20%" *ngIf="banderaChartSolicitados">
+          <canvas id="turnosSolicitadosPorMedico"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TURNOS FINALIZADOS POR MEDICO EN UN LAPSO DE TIEMPO -->
+
+  <div class="col-6 my-2" style="max-height: 60vh; overflow-y: auto;">
+
+    <div class="p-2" style="background-color: rgba(0,156,170,.7);">
+
+      <div id="pdfTurnosFinalizadosPorMedico">
+        <h3> Fecha de Informe: {{fechaDeHoy() }}</h3>
+        <h1 style="text-align: center; font-size: 1.5rem">
+          <img src="../../../favicon.ico" style="width: 100px" alt="logo" />
+          TURNOS FINALIZADOS POR MÉDICO HACE 7 DÍAS
+        </h1>
+        <div class="d-flex justify-content-evenly ">
+          <div data-html2canvas-ignore="true">
+            <button type="button" class="btn btn-primary" (click)="descargarPDFTurnosFinalizadosPorMedico()">
+              Descargar PDF
+            </button>
+            <button type="button" class="btn btn-info" (click)="descargarExcelTurnosFinalizadosPorMedico()">
+              Descargar EXCEL
+            </button>
+          </div>
+        </div>
+        <div style="margin-top: 1rem; width: 35%; margin-left: 20%" *ngIf="banderaChartFinalizados">
+          <canvas id="turnosFinalizadosPorMedico"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

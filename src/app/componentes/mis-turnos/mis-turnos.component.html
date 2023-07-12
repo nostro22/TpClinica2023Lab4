@@ -106,7 +106,7 @@
                                         <td>{{ historialClinicioSelecionado?.presion }}</td>
                                         <td>
                                             <li class="text-dark"
-                                                *ngFor="let detalle of (historialClinicioSelecionado?.detalles )">
+                                                *ngFor="let detalle of (historialClinicioSelecionado?.detalles  | keyvalue)">
                                                 {{ detalle?.key}}: {{ detalle?.value}}
                                             </li>
                                         </td>
@@ -137,7 +137,7 @@
                             <tr *ngFor="let turno of misTurnos$ | async">
                                 <td *ngIf="usuario?.tipo=='paciente'">{{ turno.especialista?.nombre }}</td>
                                 <td *ngIf="usuario?.tipo=='especialista'">{{ turno.paciente?.nombre }}</td>
-                                <td>{{ turno?.especialidad }}</td>
+                                <td>{{ turno?.especialidad | ponerTodoMayuscula}}</td>
                                 <td>{{ turno?.dia | date }}</td>
                                 <td>{{ turno?.horario | timeFormat}}</td>
                                 <td>

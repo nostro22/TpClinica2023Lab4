@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable, concatAll, distinct, distinctUntilChanged, filter, map, of, toArray } from 'rxjs';
+import { Observable, Subscription, concatAll, distinct, distinctUntilChanged, filter, map, of, tap, toArray } from 'rxjs';
 import { AutenticadorService } from 'src/app/servicios/autenticador.service';
 import { FileUploadService } from 'src/app/servicios/file-upload.service';
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
@@ -22,6 +22,8 @@ export class UsuariosComponent {
   public misHistoriales$!: Observable<any>;
   public historialClinicioSelecionado: any;
 
+  private subscription: Subscription = new Subscription();
+
   historialClinico: any;
   historialClinicoFiltrado: any[] = [];
   hayHistorial: boolean = false;
@@ -42,6 +44,33 @@ export class UsuariosComponent {
   public selectedValue = "0";
   constructor(private firebase: FileUploadService, private notificacionesS: NotificacionesService, private auth: AutenticadorService) {
   }
+
+  async ngOnInit() {
+    this.options[0].isSelected = true;
+    this.loadUsuarios();
+
+    this.usuario = (await this.auth.getUserCurrentUser()).email;
+    this.usuario = (await this.firebase.getUsuario(this.usuario))[0];
+    console.log(this.usuario);
+    this.loadUsuarios().then(() => {
+    }).then(() => {
+
+      if (this.usuario.tipo === 'especialista') {
+        this.misTurnos$ = this.firebase.getTurnosDeEspecialista(this.usuario.email).pipe(
+          map((turnos: any) => turnos.map((turno: { paciente: any }) => turno.paciente)),
+          concatAll(),
+          distinct((paciente: any) => paciente.email),
+          toArray()
+        );
+
+        // Subscribe and store the subscription
+        //this.subscription.add(this.misTurnos$.subscribe());
+      }
+    })
+  }
+
+
+
   exportAsExcelFile(json: any[], excelFileName: string): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
     const workbook: XLSX.WorkBook = {
@@ -65,26 +94,32 @@ export class UsuariosComponent {
 
 
   async onDownloadExcelClick(usuario: any) {
-    const citasUsuario = await this.firebase.getTurnosDePaciente(usuario.email).toPromise();
-    const filename = 'table.xlsx';
-  
-    if (citasUsuario) {
-      console.log(citasUsuario);
-      citasUsuario.map(cita =>{
-        cita.especialista=cita.especialista.nombre;
-        cita.paciente = cita.paciente.nombre;
-      })
-      console.log(citasUsuario);
-      this.exportAsExcelFile(citasUsuario, filename);
-    } else {
-      // Handle the case when citasUsuario is undefined
-      console.log('citasUsuario is undefined');
+
+    if (usuario.tipo == "paciente") {
+
+      const citasUsuario = await this.firebase.getTurnosDePaciente(usuario.email).toPromise();
+      const filename = 'table.xlsx';
+
+      if (citasUsuario) {
+        console.log(citasUsuario);
+        citasUsuario.map(cita => {
+          cita.especialista = cita.especialista.nombre;
+          cita.paciente = cita.paciente.nombre;
+        })
+        console.log(citasUsuario);
+        this.exportAsExcelFile(citasUsuario, filename);
+      } else {
+        // Handle the case when citasUsuario is undefined
+        console.log('citasUsuario is undefined');
+      }
     }
+
+
   }
-  
+
   async descargarHojaCalculoTodos() {
     let listadoTodosLosUsuarios = await this.firebase.getUsuarios();
-   
+
     const filename = 'ListaCompleta.xlsx';
     this.exportAsExcelFile(listadoTodosLosUsuarios, filename);
   }
@@ -105,30 +140,11 @@ export class UsuariosComponent {
     return estaHabilitado;
   }
 
-  async ngOnInit() {
-    this.options[0].isSelected = true;
-    this.loadUsuarios();
 
-    this.usuario = (await this.auth.getUserCurrentUser()).email;
-    this.usuario = (await this.firebase.getUsuario(this.usuario))[0];
-    this.loadUsuarios().then(() => {
-    }).then(() => {
-
-      if (this.listadoUsuarios.tipo === 'especialista') {
-        this.misTurnos$ = this.firebase.getTurnosDeEspecialista(this.usuario.email).pipe(
-          map((turnos: any) => turnos.map((turno: { paciente: any }) => turno.paciente)),
-          concatAll(),
-          distinct((paciente: any) => paciente.email),
-          toArray()
-        );
-
-        this.misTurnos$.subscribe(value => {
-          console.log(value);
-        });
-      }
-    })
+  ngOnDestroy() {
+    // Unsubscribe from the subscription(s)
+    this.subscription.unsubscribe();
   }
-
   async loadUsuarios() {
     this.notificacionesS.showSpinner();
     this.listadoUsuarios = await this.firebase.getUsuarios();
@@ -136,12 +152,8 @@ export class UsuariosComponent {
     for (const usuario of this.listadoUsuarios) {
       this.habilitaciones[usuario.email] = await this.isUsuarioHabilitado(usuario.email);
     }
-    let usuarioActualAuxiliar = await this.auth.getUserCurrentUser();
-    usuarioActualAuxiliar = await this.firebase.getUsuario(usuarioActualAuxiliar.email);
-    usuarioActualAuxiliar = usuarioActualAuxiliar[0];
-    this.usuarioActual = usuarioActualAuxiliar;
-    this.habilitado = await this.isUsuarioHabilitado(usuarioActualAuxiliar.email);
-    this.especialidades = await this.firebase.getEspecialidadesPorEmail(usuarioActualAuxiliar.email);
+    this.habilitado = await this.isUsuarioHabilitado(this.usuario.email);
+    this.especialidades = await this.firebase.getEspecialidadesPorEmail(this.usuario.email);
     if (this.habilitado) {
       this.habilitado = "SI";
       this.especialidadActiva = this.especialidades[0];
@@ -163,7 +175,6 @@ export class UsuariosComponent {
   public especialidades: any = [];
   public habilitado: any;
   public especialidadActiva: string = "";
-  public usuarioActual: any;
   public pacientes: any;
   public pacienteElegido: any;
   dias = [{ 'activo': false, 'dia': 'lunes' }, { 'activo': false, 'dia': 'martes' }, { 'activo': false, 'dia': 'miércoles' },
@@ -175,14 +186,17 @@ export class UsuariosComponent {
     this.pacienteElegido = paciente;
     console.log(paciente);
     this.historialClinicioSelecionado = false;
+
     this.firebase.getTurnosDePaciente(paciente.email).subscribe(cita => {
       console.log(cita);
+      this.historialClinico = cita.filter(unaCita => unaCita.especialista.email === this.usuario.email);
+      //this.historialClinico = this.historialClinico[0];
 
-      const historialFiltrado = cita.filter(unaCita => unaCita.especialista.email == this.usuario.email);
-      this.historialClinico = of(historialFiltrado);
 
+      console.log(this.historialClinico);
     });
   }
+
 
   verComentario(turno: any) {
     this.notificacionesS.showAlertSucces("Comentario", turno.comentario);

@@ -1,7 +1,7 @@
-<ngx-spinner>
-    <img src="../assets/7891096.gif" alt="Loading Spinner" style="border-radius: 50%;">
+<ngx-spinner style='display: block'>
+  <img src='../assets/7891096.gif' alt='Loading Spinner' style='border-radius: 50%;'>
 </ngx-spinner>
-<div [@routeAnimations]="prepareRoute(outlet)">
-  <app-nav-bar></app-nav-bar>
-  <router-outlet #outlet="outlet"></router-outlet>
+<div [@routeAnimations]='prepareRoute(outlet)' style='display: block'>
+<app-nav-bar></app-nav-bar>
+<router-outlet #outlet='outlet'></router-outlet>
 </div>

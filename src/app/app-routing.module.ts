@@ -11,6 +11,7 @@ import { TurnoAdministradorComponent } from './componentes/turno-administrador/t
 import { MiPerfilComponent } from './componentes/mi-perfil/mi-perfil.component';
 import { MisTurnosComponent } from './componentes/mis-turnos/mis-turnos.component';
 import { UsuariosComponent } from './componentes/usuarios/usuarios.component';
+import { GraficosComponent } from './componentes/graficos/graficos.component';
 
 const routes: Routes = [
   { path: "", pathMatch: "full", title: "Bienvenida", component: BienvenidaComponent, data: { animation: 'BienvenidaPage' } },
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: "perfil", title: "perfil", component: MiPerfilComponent, data: { animation: 'PerfilPage' } },
   { path: "404", title: "Error", component: ErrorComponent, data: { animation: 'ErrorPage' } },
   { path: "quien", title: "Eduardo Andres Sosa Segovia", component: QuienComponent, data: { animation: 'QuienPage' } },
+  { path: "graficos", title: "Graficos", component: GraficosComponent, data: { animation: 'Graficos' } },
   { path: "lazy", loadChildren: () => import('./modulos/formularios-registro/formularios-registro.module').then(m => m.FormulariosRegistroModule) },
   { path: '**', redirectTo: '404' }
 ];

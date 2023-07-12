@@ -19,7 +19,7 @@ export class MisTurnosComponent implements OnInit {
   public historialClinicioSelecionado: any;
   public pacienteElegido: any;
   historialClinico: any;
-
+  public historiales: any;
   constructor(private datePipe: DatePipe, private firebaseService: FileUploadService, private auth: AutenticadorService, private notificacionS: NotificacionesService) { }
   filtro: string = '';
   public filterByInput() {
@@ -27,10 +27,6 @@ export class MisTurnosComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-
-
-
-
 
     this.usuario = (await this.auth.getUserCurrentUser()).email;
     this.usuario = (await this.firebaseService.getUsuario(this.usuario))[0];
@@ -69,7 +65,7 @@ export class MisTurnosComponent implements OnInit {
     this.filtro = filtro;
     this.filterTurnosPaciente(filtro);
   }
-  filterTurnosPaciente(value: string) {
+  async filterTurnosPaciente(value: string) {
 
     console.log(value);
     let diaEscrito: any;
@@ -83,22 +79,50 @@ export class MisTurnosComponent implements OnInit {
           )
         }))
       );
-
     }
     else {
 
-
-      //let esta =  this.filtroHistorial(turno.paciente.email, value);
+      this.historiales = await this.firebaseService.getHistorialesPromise();
       this.misTurnos$ = this.firebaseService.getTurnosDeEspecialista(this.usuario.email).pipe(
-        map(turnos => turnos.filter(turno => {
+        map((turnos: any) => {
+          return turnos.map((turno: any) => {
+            this.historiales.forEach((element: any) => {
+              if (turno.paciente.email === element.paciente.email) {
+                turno.historial = element;
+              }
+            });
+            return turno;
+          });
+        })
+      );
+      this.misTurnos$ = this.misTurnos$.pipe(
+        map(turnos=>turnos.filter((turno:any) =>{
+          const detalles = turno.historial.detalles;
+          let esta =false;
+          if (detalles) {
+            for (const key in detalles) {
+              console.log(key);
+              if (key.includes(value) || detalles[key].toString().includes(value)) {
+                esta =  true;
+              }
+            }
+          }
 
           diaEscrito = this.datePipe.transform(turno.dia, 'MMM d, yyyy');
-         // console.log( esta)
-          return (turno.especialidad.includes(value) || turno.paciente.nombre.includes(value) || turno.horario.includes(value)
-            || turno.estado.includes(value) || diaEscrito.includes(value)
+          return (turno.especialidad.includes(value) || turno.especialista.email.includes(value) || turno.paciente.nombre.includes(value)
+            || turno.horario.includes(value) || turno.estado.includes(value) || turno.especialidad.includes(value) || diaEscrito.includes(value)
+            || turno.historial.altura == parseInt(value)
+            || turno.historial.peso == parseInt(value)
+            || turno.historial.temperatura == parseInt(value)
+            || turno.historial.presion == parseInt(value)
+            || esta
           )
         }))
-      );
+      )
+      this.misTurnos$.subscribe(turnos => {
+        console.log(turnos);
+      });
+      
     }
   }
 
@@ -109,23 +133,23 @@ export class MisTurnosComponent implements OnInit {
       return this.searchValue(historial, busqueda);
     });
   }
-  
-  searchValue(historial:any, search:any) {
+
+  searchValue(historial: any, search: any) {
     if (
       historial &&
-      (String(historial.altura) ==(search) ||
+      (String(historial.altura) == (search) ||
         String(historial.fecha) == (search) ||
         String(historial.peso) == (search) ||
-        String(historial.presion)==(search) ||
-        String(historial.temperatura)==(search))
+        String(historial.presion) == (search) ||
+        String(historial.temperatura) == (search))
     ) {
       return true;
     } else {
       return false;
     }
   }
-  
-  
+
+
 
   clickPaciente(paciente: any) {
     this.pacienteElegido = paciente;
@@ -206,7 +230,7 @@ export class MisTurnosComponent implements OnInit {
         fechaInforme: new Date(),
         paciente: paciente,
         detalles: {
-          ...historial?.detalles,
+          // ...historial?.detalles,
           ...historialNuevo?.detalles,
         },
 

@@ -153,6 +153,25 @@ export class FileUploadService {
       return [];
     }));
   }
+  getLogs(): Observable<any[]> {
+    const turnosCollectionRef = collection(this.firestore, 'historialLogins');
+
+    const queryPromise = getDocs(turnosCollectionRef);
+
+    return from(queryPromise.then((querySnapshot: QuerySnapshot<any>) => {
+      const turnosList: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const turnos = doc.data();
+        turnosList.push(turnos);
+      });
+
+      return turnosList;
+    }).catch((error) => {
+      console.error('Error fetching documents:', error);
+      return [];
+    }));
+  }
   getHistoriales(): Observable<any[]> {
     const turnosCollectionRef = collection(this.firestore, 'historiales');
 
@@ -173,6 +192,26 @@ export class FileUploadService {
       return [];
     }));
   }
+  getHistorialesPromise(): Promise<any[]> {
+    const turnosCollectionRef = collection(this.firestore, 'historiales');
+    const queryPromise = getDocs(turnosCollectionRef);
+  
+    return queryPromise.then((querySnapshot: QuerySnapshot<any>) => {
+      const turnosList: any[] = [];
+  
+      querySnapshot.forEach((doc) => {
+        const turnos = doc.data();
+        const fecha = new Date(turnos.dia?.seconds * 1000 + turnos.dia?.nanoseconds / 1000000);
+        turnosList.push({ ...turnos, dia: fecha });
+      });
+  
+      return turnosList;
+    }).catch((error) => {
+      console.error('Error fetching documents:', error);
+      return [];
+    });
+  }
+  
   async getHistorial(paciente: string): Promise<{ historialesList: any[] }|null> {
     const historialesCollectionRef = collection(this.firestore, 'historiales');
     const q = query(historialesCollectionRef, where('paciente.email', '==', paciente));
